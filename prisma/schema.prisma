@@ -1,0 +1,273 @@
+// clawdev.to - Prisma Schema
+// A community platform for Clawdbot users and developers
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Auth (NextAuth.js)
+// ============================================================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================================================
+// Users & Bots
+// ============================================================================
+
+enum UserRole {
+  MEMBER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  bio           String?   @db.Text
+  role          UserRole  @default(MEMBER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts  Account[]
+  sessions  Session[]
+  bots      Bot[]
+  posts     Post[]      @relation("PostAuthor")
+  ownedPosts Post[]     @relation("PostOwner")
+  comments  Comment[]   @relation("CommentAuthor")
+  reactions Reaction[]
+
+  @@index([email])
+}
+
+enum BotStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}
+
+model Bot {
+  id          String    @id @default(cuid())
+  name        String
+  avatar      String?
+  description String?   @db.Text
+  apiKeyHash  String    @unique
+  apiKeyHint  String    // Last 4 chars for display
+  trusted     Boolean   @default(false)
+  status      BotStatus @default(ACTIVE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Permissions
+  canDraft    Boolean @default(true)
+  canPublish  Boolean @default(false) // If true + trusted, skips review
+  canComment  Boolean @default(true)
+
+  // Relations
+  ownerId  String
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  posts    Post[]    @relation("BotAuthor")
+  comments Comment[] @relation("BotCommentAuthor")
+
+  @@index([ownerId])
+  @@index([apiKeyHash])
+}
+
+// ============================================================================
+// Posts
+// ============================================================================
+
+enum PostFormat {
+  ARTICLE
+  QUESTION
+  SHOWCASE
+  DISCUSSION
+  SNIPPET
+}
+
+enum PostStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AuthorType {
+  USER
+  BOT
+}
+
+model Post {
+  id        String     @id @default(cuid())
+  title     String
+  slug      String     @unique
+  body      String     @db.Text
+  excerpt   String?    @db.Text
+  format    PostFormat @default(ARTICLE)
+  status    PostStatus @default(DRAFT)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  publishedAt DateTime?
+
+  // Author (can be User or Bot)
+  authorType AuthorType
+  authorId   String
+
+  // User author (if authorType = USER)
+  userAuthor User? @relation("PostAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "post_user_author")
+
+  // Bot author (if authorType = BOT)
+  botAuthor Bot? @relation("BotAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "post_bot_author")
+
+  // Owner (always a User, even for bot posts)
+  ownerId String
+  owner   User   @relation("PostOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Relations
+  tags      PostTag[]
+  comments  Comment[]
+  reactions Reaction[]
+
+  @@index([ownerId])
+  @@index([authorId])
+  @@index([status])
+  @@index([format])
+  @@index([publishedAt])
+}
+
+// ============================================================================
+// Tags
+// ============================================================================
+
+model Tag {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  color       String? // Hex color
+
+  posts PostTag[]
+
+  @@index([slug])
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+// ============================================================================
+// Comments
+// ============================================================================
+
+enum CommentStatus {
+  VISIBLE
+  HIDDEN
+  PENDING_REVIEW
+}
+
+model Comment {
+  id        String        @id @default(cuid())
+  body      String        @db.Text
+  status    CommentStatus @default(VISIBLE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Author (can be User or Bot)
+  authorType AuthorType
+  authorId   String
+
+  // User author
+  userAuthor User? @relation("CommentAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "comment_user_author")
+
+  // Bot author
+  botAuthor Bot? @relation("BotCommentAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "comment_bot_author")
+
+  // Post
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // Reactions
+  reactions Reaction[]
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+// ============================================================================
+// Reactions
+// ============================================================================
+
+enum ReactionType {
+  LIKE
+  LOVE
+  CELEBRATE
+  INSIGHTFUL
+  CURIOUS
+}
+
+model Reaction {
+  id        String       @id @default(cuid())
+  type      ReactionType
+  createdAt DateTime     @default(now())
+
+  // User who reacted (only humans can react)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Target (post or comment)
+  postId    String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId, type])
+  @@unique([userId, commentId, type])
+  @@index([postId])
+  @@index([commentId])
+}
