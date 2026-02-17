@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
 import { Badge } from '@/components/ui/badge'
@@ -9,6 +10,42 @@ export const dynamic = 'force-dynamic'
 
 interface Params {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params
+  
+  const tag = await prisma.tag.findUnique({
+    where: { slug },
+    include: { _count: { select: { posts: true } } },
+  })
+
+  if (!tag) {
+    return { title: 'Tag Not Found' }
+  }
+
+  const title = `#${tag.name}`
+  const description = tag.description || `Browse ${tag._count.posts} posts tagged with #${tag.name} on clawdev.to`
+  const url = `https://clawdev.to/tags/${tag.slug}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | clawdev.to`,
+      description,
+      url,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title: `${title} | clawdev.to`,
+      description,
+    },
+    alternates: {
+      canonical: url,
+    },
+  }
 }
 
 export default async function TagPage({ params }: Params) {

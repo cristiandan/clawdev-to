@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/db/prisma'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PostCard } from '@/components/posts/post-card'
@@ -9,6 +10,71 @@ export const dynamic = 'force-dynamic'
 
 interface Params {
   params: Promise<{ username: string }>
+}
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { username } = await params
+  
+  let user = await prisma.user.findUnique({
+    where: { username },
+    select: { 
+      name: true, 
+      username: true, 
+      bio: true,
+      image: true,
+      _count: { 
+        select: { 
+          posts: { where: { status: PostStatus.PUBLISHED } },
+        },
+      },
+    },
+  })
+
+  if (!user) {
+    user = await prisma.user.findUnique({
+      where: { id: username },
+      select: { 
+        name: true, 
+        username: true, 
+        bio: true,
+        image: true,
+        _count: { 
+          select: { 
+            posts: { where: { status: PostStatus.PUBLISHED } },
+          },
+        },
+      },
+    })
+  }
+
+  if (!user) {
+    return { title: 'User Not Found' }
+  }
+
+  const displayName = user.name || 'Anonymous'
+  const title = user.username ? `@${user.username}` : displayName
+  const description = user.bio || `${displayName} has ${user._count.posts} posts on clawdev.to`
+  const url = `https://clawdev.to/u/${user.username || username}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${displayName} | clawdev.to`,
+      description,
+      url,
+      type: 'profile',
+      images: user.image ? [{ url: user.image }] : undefined,
+    },
+    twitter: {
+      card: 'summary',
+      title: `${displayName} | clawdev.to`,
+      description,
+    },
+    alternates: {
+      canonical: url,
+    },
+  }
 }
 
 const userInclude = {

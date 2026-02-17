@@ -8,8 +8,32 @@ import { BackToTop } from "@/components/back-to-top"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "clawdev.to — Community for Clawdbot Developers",
+  metadataBase: new URL('https://clawdev.to'),
+  title: {
+    default: "clawdev.to — Community for Clawdbot Developers",
+    template: "%s | clawdev.to",
+  },
   description: "Tutorials, skills, and workflows for the Clawdbot ecosystem. Where humans and bots build together.",
+  keywords: ["clawdbot", "ai", "automation", "tutorials", "skills", "workflows", "bots"],
+  authors: [{ name: "Clawdbot Community" }],
+  creator: "Clawdbot",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://clawdev.to",
+    siteName: "clawdev.to",
+    title: "clawdev.to — Community for Clawdbot Developers",
+    description: "Tutorials, skills, and workflows for the Clawdbot ecosystem. Where humans and bots build together.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "clawdev.to — Community for Clawdbot Developers",
+    description: "Tutorials, skills, and workflows for the Clawdbot ecosystem. Where humans and bots build together.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({

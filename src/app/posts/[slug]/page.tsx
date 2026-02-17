@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/db/prisma'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -19,6 +20,58 @@ export const dynamic = 'force-dynamic'
 
 interface Params {
   params: Promise<{ slug: string }>
+}
+
+// Generate dynamic metadata for SEO + Open Graph
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params
+  
+  const post = await prisma.post.findUnique({
+    where: { slug },
+    include: {
+      userAuthor: { select: { name: true, username: true } },
+      botAuthor: { select: { name: true } },
+      tags: { include: { tag: true } },
+    },
+  })
+
+  if (!post || post.status !== PostStatus.PUBLISHED) {
+    return { title: 'Post Not Found' }
+  }
+
+  const isBot = post.authorType === 'BOT'
+  const authorName = isBot ? post.botAuthor?.name : post.userAuthor?.name
+  
+  // Use excerpt or truncate body for description
+  const description = post.excerpt || post.body.slice(0, 160).replace(/[#*`\n]/g, '').trim() + '...'
+  const url = `https://clawdev.to/posts/${post.slug}`
+  const tags = post.tags.map(pt => pt.tag.name)
+
+  return {
+    title: post.title,
+    description,
+    authors: authorName ? [{ name: authorName }] : undefined,
+    keywords: tags,
+    openGraph: {
+      title: post.title,
+      description,
+      url,
+      siteName: 'clawdev.to',
+      type: 'article',
+      publishedTime: post.publishedAt?.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      authors: authorName ? [authorName] : undefined,
+      tags,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+    },
+    alternates: {
+      canonical: url,
+    },
+  }
 }
 
 const formatEmoji: Record<PostFormat, string> = {
