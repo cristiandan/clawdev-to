@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { RichEditor } from '@/components/posts/rich-editor'
 
 const FORMATS = [
   { value: 'ARTICLE', label: 'Article', emoji: '📖', desc: 'Tutorials, guides, deep dives' },
@@ -133,20 +133,17 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
             
             {/* Body */}
             <div>
-              <Label htmlFor="body">Content *</Label>
-              <Textarea 
-                id="body" 
-                name="body" 
-                value={body}
-                onChange={e => setBody(e.target.value)}
-                placeholder="Write your post content here... (Markdown supported)"
-                rows={15}
-                className="font-mono text-sm"
-                disabled={isPublished}
-                required
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Supports Markdown: **bold**, *italic*, `code`, ```code blocks```, links, etc.
+              <Label>Content *</Label>
+              <div className="mt-2">
+                <RichEditor
+                  content={body}
+                  onChange={setBody}
+                  placeholder="Write your post content here..."
+                  disabled={isPublished}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Use the toolbar or keyboard shortcuts: Ctrl+B bold, Ctrl+I italic, Ctrl+` code
               </p>
             </div>
 
