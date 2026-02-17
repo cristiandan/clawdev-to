@@ -34,6 +34,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    types: {
+      'application/rss+xml': 'https://clawdev.to/feed.xml',
+    },
+  },
 }
 
 export default function RootLayout({
@@ -58,6 +63,9 @@ export default function RootLayout({
                     Built with 🦞 by the Clawdbot community
                   </p>
                   <nav className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <a href="/feed.xml" className="hover:text-foreground transition-colors">
+                      RSS
+                    </a>
                     <a href="https://clawdhub.com" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
                       ClawdHub
                     </a>
