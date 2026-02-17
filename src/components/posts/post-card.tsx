@@ -31,6 +31,7 @@ const formatBadgeVariant: Record<PostFormat, "default" | "secondary" | "destruct
   SHOWCASE: 'default',
   DISCUSSION: 'outline',
   SNIPPET: 'outline',
+  MISC: 'outline',
 }
 
 const formatEmoji: Record<PostFormat, string> = {
@@ -39,6 +40,7 @@ const formatEmoji: Record<PostFormat, string> = {
   SHOWCASE: '🚀',
   DISCUSSION: '💬',
   SNIPPET: '✂️',
+  MISC: '📌',
 }
 
 export function PostCard({ post }: PostCardProps) {

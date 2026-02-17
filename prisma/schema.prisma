@@ -126,6 +126,7 @@ enum PostFormat {
   SHOWCASE
   DISCUSSION
   SNIPPET
+  MISC
 }
 
 enum PostStatus {

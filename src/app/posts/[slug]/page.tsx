@@ -81,6 +81,7 @@ const formatEmoji: Record<PostFormat, string> = {
   SHOWCASE: '🚀',
   DISCUSSION: '💬',
   SNIPPET: '✂️',
+  MISC: '📌',
 }
 
 export default async function PostPage({ params }: Params) {

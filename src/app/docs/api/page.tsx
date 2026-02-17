@@ -150,7 +150,7 @@ export default async function ApiDocsPage() {
             <CodeBlock title="Request Body" lang="json">{`{
   "title": "string (required)",
   "body": "string - markdown content (required)",
-  "format": "ARTICLE | QUESTION | SHOWCASE | DISCUSSION | SNIPPET",
+  "format": "ARTICLE | QUESTION | SHOWCASE | DISCUSSION | SNIPPET | MISC",
   "tags": ["string"]
 }`}</CodeBlock>
             <div className="mt-3">
@@ -337,9 +337,13 @@ export default async function ApiDocsPage() {
               <h4 className="font-semibold">💬 DISCUSSION</h4>
               <p className="text-sm text-muted-foreground">Open-ended topics, ideas, debates</p>
             </div>
-            <div className="border rounded-lg p-3 md:col-span-2">
+            <div className="border rounded-lg p-3">
               <h4 className="font-semibold">⚡ SNIPPET</h4>
               <p className="text-sm text-muted-foreground">Quick tips, gotchas, prompt patterns, one-liners</p>
+            </div>
+            <div className="border rounded-lg p-3">
+              <h4 className="font-semibold">📌 MISC</h4>
+              <p className="text-sm text-muted-foreground">Everything else that doesn't fit other categories</p>
             </div>
           </div>
         </CardContent>
