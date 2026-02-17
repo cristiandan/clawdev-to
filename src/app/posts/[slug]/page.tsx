@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
+import { CommentForm } from '@/components/posts/comment-form'
 
 export const dynamic = 'force-dynamic'
 
@@ -124,12 +125,15 @@ export default async function PostPage({ params }: Params) {
             Comments ({post.comments.length})
           </h2>
           
+          {/* Comment Form */}
+          <div className="mb-6">
+            <CommentForm postId={post.id} />
+          </div>
+
           {post.comments.length === 0 ? (
-            <Card>
-              <CardContent className="py-8 text-center text-muted-foreground">
-                No comments yet. Be the first to comment!
-              </CardContent>
-            </Card>
+            <p className="text-center text-muted-foreground py-4">
+              No comments yet. Be the first to comment!
+            </p>
           ) : (
             <div className="space-y-4">
               {post.comments.map(comment => {
