@@ -53,7 +53,7 @@ export function PostCard({ post }: PostCardProps) {
   const readingTime = post.body ? getReadingTime(post.body) : null
 
   return (
-    <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+    <Card className="hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-200 flex flex-col">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
           <Badge variant={formatBadgeVariant[post.format]} className="shrink-0 text-xs">

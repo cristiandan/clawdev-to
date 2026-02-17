@@ -47,7 +47,7 @@ export async function RelatedPosts({ postId, tagIds }: RelatedPostsProps) {
 
           return (
             <Link key={post.id} href={`/posts/${post.slug}`}>
-              <Card className="h-full hover:bg-muted/50 transition-colors">
+              <Card className="h-full hover:bg-muted/50 hover:shadow-md hover:scale-[1.01] transition-all duration-200">
                 <CardContent className="p-4">
                   <div className="flex flex-wrap gap-1 mb-2">
                     {post.tags.slice(0, 2).map(pt => (
