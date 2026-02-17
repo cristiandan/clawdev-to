@@ -73,7 +73,7 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   }
 
   return (
-    <nav className="hidden xl:block sticky top-20 ml-8 w-64 max-h-[calc(100vh-6rem)] overflow-y-auto">
+    <nav className="hidden xl:block sticky top-20 w-64 shrink-0 max-h-[calc(100vh-6rem)] overflow-y-auto">
       <div className="border-l pl-4">
         <div className="flex items-center gap-2 text-sm font-medium mb-3 text-muted-foreground">
           <List className="h-4 w-4" />

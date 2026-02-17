@@ -64,8 +64,8 @@ export default async function PostPage({ params }: Params) {
 
   return (
     <div className="container py-8">
-      <div className="flex justify-center">
-        <article className="max-w-4xl flex-1">
+      <div className="flex justify-center gap-8">
+        <article className="max-w-4xl w-full min-w-0">
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-center gap-2 mb-4">
