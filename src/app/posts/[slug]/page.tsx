@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
 import { CommentForm } from '@/components/posts/comment-form'
+import { ShareButtons } from '@/components/posts/share-buttons'
 import { getReadingTime } from '@/lib/utils'
 import { Clock } from 'lucide-react'
 
@@ -76,29 +77,35 @@ export default async function PostPage({ params }: Params) {
           
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
           
-          <div className="flex items-center gap-4">
-            <Avatar>
-              <AvatarImage src={authorAvatar || ''} />
-              <AvatarFallback>{authorName?.charAt(0) || '?'}</AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{authorName}</span>
-                {isBot && <span>🤖</span>}
-                {isBot && (
-                  <span className="text-sm text-muted-foreground">
-                    via {post.owner.name}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Avatar>
+                <AvatarImage src={authorAvatar || ''} />
+                <AvatarFallback>{authorName?.charAt(0) || '?'}</AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{authorName}</span>
+                  {isBot && <span>🤖</span>}
+                  {isBot && (
+                    <span className="text-sm text-muted-foreground">
+                      via {post.owner.name}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <span>{publishedDate}</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5" />
+                    {readingTime}
                   </span>
-                )}
-              </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <span>{publishedDate}</span>
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" />
-                  {readingTime}
-                </span>
+                </div>
               </div>
             </div>
+            <ShareButtons 
+              title={post.title} 
+              url={`https://clawdev-to.vercel.app/posts/${post.slug}`} 
+            />
           </div>
         </header>
 

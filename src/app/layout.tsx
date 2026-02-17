@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
 import { Header } from "@/components/layout/header"
+import { BackToTop } from "@/components/back-to-top"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,6 +26,7 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
+            <BackToTop />
             <footer className="border-t py-6">
               <div className="container">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
