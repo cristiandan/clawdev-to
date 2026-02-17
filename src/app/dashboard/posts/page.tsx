@@ -68,8 +68,8 @@ export default async function DashboardPostsPage() {
                       {post.createdAt.toLocaleDateString()}
                     </span>
                     <Link 
-                      href={post.status === 'PUBLISHED' ? `/posts/${post.slug}` : '#'}
-                      className={`font-medium truncate max-w-[300px] ${post.status === 'PUBLISHED' ? 'hover:underline' : 'text-muted-foreground'}`}
+                      href={post.status === 'PUBLISHED' ? `/posts/${post.slug}` : `/preview/${post.id}`}
+                      className="font-medium truncate max-w-[300px] hover:underline"
                     >
                       {post.title}
                     </Link>

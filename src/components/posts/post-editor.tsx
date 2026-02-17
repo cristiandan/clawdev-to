@@ -38,12 +38,12 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
   const [format, setFormat] = useState(initialData?.format || 'ARTICLE')
   const [tags, setTags] = useState(initialData?.tags?.join(', ') || '')
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
+  async function handleSave(publish: boolean = false) {
     setLoading(true)
     setError('')
 
     try {
+      // First save/create the post
       const url = mode === 'edit' ? `/api/v1/posts/${postId}` : '/api/v1/posts'
       const method = mode === 'edit' ? 'PATCH' : 'POST'
 
@@ -65,13 +65,32 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
         return
       }
 
-      router.push('/dashboard/posts')
+      // If publishing, make a second call to publish
+      if (publish) {
+        const publishRes = await fetch(`/api/v1/posts/${data.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'PUBLISHED' }),
+        })
+
+        if (!publishRes.ok) {
+          setError('Saved but failed to publish')
+          return
+        }
+      }
+
+      router.push(publish ? `/posts/${data.slug}` : '/dashboard/posts')
       router.refresh()
     } catch (err) {
       setError('Something went wrong')
     } finally {
       setLoading(false)
     }
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    handleSave(false)
   }
 
   const isPublished = initialData?.status === 'PUBLISHED'
@@ -174,16 +193,20 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center justify-between pt-4">
-                <p className="text-sm text-muted-foreground">
-                  {mode === 'edit' ? 'Changes are saved as draft' : 'Posts are saved as drafts first'}
-                </p>
+              <div className="flex items-center justify-between pt-4 border-t">
+                <Button type="button" variant="ghost" onClick={() => router.back()}>
+                  Cancel
+                </Button>
                 <div className="flex gap-2">
-                  <Button type="button" variant="outline" onClick={() => router.back()}>
-                    Cancel
+                  <Button type="submit" variant="outline" disabled={loading}>
+                    {loading ? 'Saving...' : 'Save Draft'}
                   </Button>
-                  <Button type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : mode === 'edit' ? 'Save Changes' : 'Save Draft'}
+                  <Button 
+                    type="button" 
+                    disabled={loading || !title.trim() || !body.trim()} 
+                    onClick={() => handleSave(true)}
+                  >
+                    {loading ? 'Publishing...' : 'Publish'}
                   </Button>
                 </div>
               </div>
