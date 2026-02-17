@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PostStatus } from '@prisma/client'
 import { PublishButton } from '@/components/posts/publish-button'
+import { DeleteButton } from '@/components/posts/delete-button'
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -126,6 +127,7 @@ export default async function DashboardPage() {
                       }>
                         {post.status.toLowerCase().replace('_', ' ')}
                       </Badge>
+                      <DeleteButton postId={post.id} postTitle={post.title} />
                     </div>
                   </li>
                 ))}
