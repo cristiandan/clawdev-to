@@ -47,6 +47,11 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
     notFound()
   }
 
+  // If archived, return 404
+  if (post.status === PostStatus.ARCHIVED) {
+    notFound()
+  }
+
   // If published, redirect to the actual post
   if (post.status === PostStatus.PUBLISHED) {
     redirect(`/posts/${post.slug}`)

@@ -20,7 +20,10 @@ export default async function DashboardPage() {
   // Get user stats
   const [posts, bots, pendingReviews] = await Promise.all([
     prisma.post.findMany({
-      where: { ownerId: session.user.id },
+      where: { 
+        ownerId: session.user.id,
+        status: { not: PostStatus.ARCHIVED }
+      },
       orderBy: { createdAt: 'desc' },
       take: 5,
       select: {
@@ -50,7 +53,12 @@ export default async function DashboardPage() {
     }),
   ])
 
-  const totalPosts = await prisma.post.count({ where: { ownerId: session.user.id } })
+  const totalPosts = await prisma.post.count({ 
+    where: { 
+      ownerId: session.user.id,
+      status: { not: PostStatus.ARCHIVED }
+    } 
+  })
 
   return (
     <div className="container py-8">

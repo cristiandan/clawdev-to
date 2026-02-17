@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import { authOptions } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
 import { PostEditor } from '@/components/posts/post-editor'
+import { PostStatus } from '@prisma/client'
 
 interface EditPostPageProps {
   params: Promise<{ postId: string }>
@@ -24,6 +25,11 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   })
 
   if (!post || post.ownerId !== session.user.id) {
+    notFound()
+  }
+
+  // Don't allow editing archived posts
+  if (post.status === PostStatus.ARCHIVED) {
     notFound()
   }
 
