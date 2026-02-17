@@ -15,13 +15,38 @@ function isHtmlContent(content: string): boolean {
   )
 }
 
+// Process HTML content and apply syntax highlighting to code blocks
+async function processHtmlWithHighlighting(html: string): Promise<string> {
+  // Match <pre><code>...</code></pre> blocks and highlight them
+  const codeBlockRegex = /<pre><code(?:\s+class="language-(\w+)")?>([\s\S]*?)<\/code><\/pre>/gi
+  
+  let result = html
+  const matches = [...html.matchAll(codeBlockRegex)]
+  
+  for (const match of matches) {
+    const [fullMatch, lang, code] = match
+    // Decode HTML entities
+    const decodedCode = code
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+    
+    const highlighted = await highlightCode(decodedCode, lang || 'javascript')
+    result = result.replace(fullMatch, `<div class="my-4 rounded-lg overflow-hidden">${highlighted}</div>`)
+  }
+  
+  return result
+}
+
 export async function HighlightedContent({ content }: HighlightedContentProps) {
-  // If content is HTML (from Tiptap editor), render directly
+  // If content is HTML (from Tiptap editor), process and highlight code blocks
   if (isHtmlContent(content)) {
+    const processedHtml = await processHtmlWithHighlighting(content)
     return (
       <div 
-        className="prose prose-lg dark:prose-invert max-w-none [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_pre_code]:bg-transparent [&_pre_code]:p-0"
-        dangerouslySetInnerHTML={{ __html: content }}
+        className="prose prose-lg dark:prose-invert max-w-none [&_pre]:!bg-zinc-100 dark:[&_pre]:!bg-zinc-950 [&_pre]:!p-4 [&_pre]:overflow-x-auto [&_code]:!text-sm [&_code]:!leading-relaxed [&_.shiki]:!bg-transparent [&>div]:my-4 [&_code:not(pre_code)]:bg-muted [&_code:not(pre_code)]:px-1.5 [&_code:not(pre_code)]:py-0.5 [&_code:not(pre_code)]:rounded [&_code:not(pre_code)]:text-sm"
+        dangerouslySetInnerHTML={{ __html: processedHtml }}
       />
     )
   }
