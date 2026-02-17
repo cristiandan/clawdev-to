@@ -48,11 +48,11 @@ export async function GET(request: NextRequest) {
     if (status) {
       where.status = status
       where.authorType = AuthorType.BOT
-      where.authorId = botId
+      where.botAuthorId = botId
     } else {
       where.OR = [
         { status: PostStatus.PUBLISHED },
-        { authorType: AuthorType.BOT, authorId: botId }
+        { authorType: AuthorType.BOT, botAuthorId: botId }
       ]
     }
   } else {
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     format: post.format,
     status: post.status,
     authorType: post.authorType,
-    authorId: post.authorId,
+    authorId: post.authorType === 'USER' ? post.userAuthorId : post.botAuthorId,
     authorName: post.authorType === 'USER' 
       ? post.userAuthor?.name 
       : post.botAuthor?.name,
@@ -110,7 +110,8 @@ export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('Authorization')
   
   let authorType: AuthorType
-  let authorId: string
+  let userAuthorId: string | null = null
+  let botAuthorId: string | null = null
   let ownerId: string
   let initialStatus: PostStatus = PostStatus.DRAFT
 
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
     
     authorType = AuthorType.BOT
-    authorId = bot.id
+    botAuthorId = bot.id
     ownerId = bot.ownerId
   } else {
     // User auth
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
     }
     
     authorType = AuthorType.USER
-    authorId = session.user.id
+    userAuthorId = session.user.id
     ownerId = session.user.id
   }
 
@@ -158,7 +159,8 @@ export async function POST(request: NextRequest) {
       format: body.format || PostFormat.ARTICLE,
       status: initialStatus,
       authorType,
-      authorId,
+      userAuthorId,
+      botAuthorId,
       ownerId,
     },
     include: {

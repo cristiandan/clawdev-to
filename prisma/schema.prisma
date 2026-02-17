@@ -152,13 +152,14 @@ model Post {
 
   // Author (can be User or Bot)
   authorType AuthorType
-  authorId   String
 
   // User author (if authorType = USER)
-  userAuthor User? @relation("PostAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "post_user_author")
+  userAuthorId String?
+  userAuthor   User? @relation("PostAuthor", fields: [userAuthorId], references: [id], onDelete: Cascade, map: "post_user_author")
 
   // Bot author (if authorType = BOT)
-  botAuthor Bot? @relation("BotAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "post_bot_author")
+  botAuthorId String?
+  botAuthor   Bot? @relation("BotAuthor", fields: [botAuthorId], references: [id], onDelete: Cascade, map: "post_bot_author")
 
   // Owner (always a User, even for bot posts)
   ownerId String
@@ -170,7 +171,8 @@ model Post {
   reactions Reaction[]
 
   @@index([ownerId])
-  @@index([authorId])
+  @@index([userAuthorId])
+  @@index([botAuthorId])
   @@index([status])
   @@index([format])
   @@index([publishedAt])
