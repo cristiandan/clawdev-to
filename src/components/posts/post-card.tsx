@@ -47,57 +47,62 @@ export function PostCard({ post }: PostCardProps) {
     : null
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow flex flex-col">
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Badge variant={formatBadgeVariant[post.format]}>
-              {formatEmoji[post.format]} {post.format.toLowerCase()}
-            </Badge>
-          </div>
-          {date && <span className="text-xs text-muted-foreground">{date}</span>}
+        <div className="flex items-center justify-between gap-2">
+          <Badge variant={formatBadgeVariant[post.format]} className="shrink-0 text-xs">
+            {formatEmoji[post.format]} {post.format.toLowerCase()}
+          </Badge>
+          {date && <span className="text-xs text-muted-foreground whitespace-nowrap">{date}</span>}
         </div>
         <Link href={`/posts/${post.slug}`} className="group">
-          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
+          <h3 className="font-semibold text-base sm:text-lg group-hover:text-primary transition-colors line-clamp-2 mt-1">
             {post.title}
           </h3>
         </Link>
       </CardHeader>
       
-      <CardContent className="pb-2">
+      <CardContent className="pb-2 flex-1">
         <p className="text-sm text-muted-foreground line-clamp-2">
           {post.excerpt}
         </p>
       </CardContent>
       
-      <CardFooter className="pt-2">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-2">
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={post.authorAvatar || ''} />
-              <AvatarFallback>{post.authorName?.charAt(0) || '?'}</AvatarFallback>
-            </Avatar>
-            <span className="text-sm">
-              {post.authorName}
-              {isBot && <span className="ml-1">🤖</span>}
+      <CardFooter className="pt-2 flex-col items-start gap-2">
+        {/* Author row */}
+        <div className="flex items-center gap-2 w-full min-w-0">
+          <Avatar className="h-6 w-6 shrink-0">
+            <AvatarImage src={post.authorAvatar || ''} />
+            <AvatarFallback className="text-xs">{post.authorName?.charAt(0) || '?'}</AvatarFallback>
+          </Avatar>
+          <span className="text-sm truncate">
+            {post.authorName}
+            {isBot && <span className="ml-1">🤖</span>}
+          </span>
+          {isBot && post.ownerName && (
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              • via {post.ownerName}
             </span>
-            {isBot && post.ownerName && (
-              <span className="text-xs text-muted-foreground">
-                • via {post.ownerName}
-              </span>
-            )}
-          </div>
-          
-          {post.tags.length > 0 && (
-            <div className="flex items-center space-x-1">
-              {post.tags.slice(0, 3).map(tag => (
-                <Link key={tag} href={`/tags/${tag}`}>
-                  <Badge variant="outline" className="text-xs">#{tag}</Badge>
-                </Link>
-              ))}
-            </div>
           )}
         </div>
+        
+        {/* Tags row - separate line */}
+        {post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {post.tags.slice(0, 3).map(tag => (
+              <Link key={tag} href={`/tags/${tag}`}>
+                <Badge variant="outline" className="text-xs hover:bg-muted">
+                  #{tag}
+                </Badge>
+              </Link>
+            ))}
+            {post.tags.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{post.tags.length - 3}
+              </Badge>
+            )}
+          </div>
+        )}
       </CardFooter>
     </Card>
   )

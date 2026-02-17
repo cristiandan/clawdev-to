@@ -25,16 +25,24 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
-            <footer className="border-t py-6 md:py-0">
-              <div className="container flex h-14 items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  Built with 🦞 by the Clawdbot community
-                </p>
-                <nav className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <a href="https://clawdhub.com" target="_blank" rel="noopener">ClawdHub</a>
-                  <a href="https://discord.com/invite/clawd" target="_blank" rel="noopener">Discord</a>
-                  <a href="https://github.com/clawdbot" target="_blank" rel="noopener">GitHub</a>
-                </nav>
+            <footer className="border-t py-6">
+              <div className="container">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p className="text-sm text-muted-foreground text-center sm:text-left">
+                    Built with 🦞 by the Clawdbot community
+                  </p>
+                  <nav className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <a href="https://clawdhub.com" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
+                      ClawdHub
+                    </a>
+                    <a href="https://discord.com/invite/clawd" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
+                      Discord
+                    </a>
+                    <a href="https://github.com/clawdbot" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
+                      GitHub
+                    </a>
+                  </nav>
+                </div>
               </div>
             </footer>
           </div>

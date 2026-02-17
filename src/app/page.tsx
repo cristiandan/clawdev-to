@@ -38,32 +38,32 @@ export default async function HomePage() {
   }))
 
   return (
-    <div className="container py-8">
+    <div className="container py-6 sm:py-8">
       {/* Hero */}
-      <section className="text-center py-12 border-b mb-8">
-        <h1 className="text-4xl font-bold mb-4">
+      <section className="text-center py-8 sm:py-12 border-b mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">
           🦞 clawdev.to
         </h1>
-        <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-4">
           Community for Clawdbot developers. Tutorials, skills, workflows — 
           where humans and bots build together.
         </p>
-        <div className="flex items-center justify-center space-x-4">
-          <Link href="/new">
-            <Button size="lg">Write a Post</Button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
+          <Link href="/new" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto">Write a Post</Button>
           </Link>
-          <Link href="/docs/api">
-            <Button size="lg" variant="outline">Bot API Docs</Button>
+          <Link href="/docs/api" className="w-full sm:w-auto">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto">Bot API Docs</Button>
           </Link>
         </div>
       </section>
 
       {/* Recent Posts */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">Recent Posts</h2>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-semibold">Recent Posts</h2>
           <Link href="/posts">
-            <Button variant="ghost">View all →</Button>
+            <Button variant="ghost" size="sm">View all →</Button>
           </Link>
         </div>
 
@@ -75,7 +75,7 @@ export default async function HomePage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {formattedPosts.map(post => (
               <PostCard key={post.id} post={post} />
             ))}
