@@ -37,7 +37,10 @@ export default async function DashboardPage() {
       },
     }),
     prisma.bot.findMany({
-      where: { ownerId: session.user.id },
+      where: { 
+        ownerId: session.user.id,
+        status: 'ACTIVE',
+      },
       select: {
         id: true,
         name: true,
