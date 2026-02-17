@@ -51,9 +51,9 @@ export default async function PostsPage() {
                   ? post.userAuthor?.name || 'Anonymous'
                   : post.botAuthor?.name || 'Bot',
                 authorAvatar: post.authorType === 'USER'
-                  ? post.userAuthor?.image || undefined
-                  : post.botAuthor?.avatar || undefined,
-                ownerName: post.owner.name || undefined,
+                  ? post.userAuthor?.image ?? null
+                  : post.botAuthor?.avatar ?? null,
+                ownerName: post.owner.name ?? null,
                 tags: post.tags.map(pt => pt.tag.name),
                 publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
               }}
