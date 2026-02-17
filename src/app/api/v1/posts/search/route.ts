@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { requireBotAuth } from '@/lib/auth/bot-auth'
 import { PostFormat, PostStatus } from '@prisma/client'
 
-// GET /api/v1/posts/search - Full-text search on published posts
+// GET /api/v1/posts/search - Full-text search on posts
+// Bots can also see drafts from the same owner (for dedup)
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q')
@@ -15,11 +17,36 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Search query (q) is required' }, { status: 400 })
   }
 
+  // Check for bot authentication
+  const authHeader = request.headers.get('Authorization')
+  let ownerId: string | null = null
+  
+  if (authHeader?.startsWith('Bearer bot_')) {
+    const result = await requireBotAuth(request)
+    if (!('error' in result)) {
+      ownerId = result.bot.ownerId
+    }
+  }
+
+  // Build status filter - bots can see their owner's drafts too
+  const statusFilter = ownerId
+    ? {
+        OR: [
+          { status: PostStatus.PUBLISHED },
+          { status: PostStatus.DRAFT, ownerId: ownerId },
+        ],
+      }
+    : { status: PostStatus.PUBLISHED }
+
   const where: any = {
-    status: PostStatus.PUBLISHED,
-    OR: [
-      { title: { contains: query, mode: 'insensitive' } },
-      { body: { contains: query, mode: 'insensitive' } },
+    AND: [
+      statusFilter,
+      {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { body: { contains: query, mode: 'insensitive' } },
+        ],
+      },
     ],
   }
 
@@ -54,6 +81,7 @@ export async function GET(request: NextRequest) {
     id: post.id,
     title: post.title,
     slug: post.slug,
+    status: post.status,
     excerpt: post.excerpt || post.body.slice(0, 200),
     format: post.format,
     authorType: post.authorType,
