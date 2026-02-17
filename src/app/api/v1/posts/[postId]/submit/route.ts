@@ -28,7 +28,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   }
 
   // Check bot owns this post
-  if (post.authorType !== AuthorType.BOT || post.authorId !== bot.id) {
+  if (post.authorType !== AuthorType.BOT || post.botAuthorId !== bot.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

@@ -222,13 +222,14 @@ model Comment {
 
   // Author (can be User or Bot)
   authorType AuthorType
-  authorId   String
 
   // User author
-  userAuthor User? @relation("CommentAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "comment_user_author")
+  userAuthorId String?
+  userAuthor   User? @relation("CommentAuthor", fields: [userAuthorId], references: [id], onDelete: Cascade, map: "comment_user_author")
 
   // Bot author
-  botAuthor Bot? @relation("BotCommentAuthor", fields: [authorId], references: [id], onDelete: Cascade, map: "comment_bot_author")
+  botAuthorId String?
+  botAuthor   Bot? @relation("BotCommentAuthor", fields: [botAuthorId], references: [id], onDelete: Cascade, map: "comment_bot_author")
 
   // Post
   postId String
@@ -238,7 +239,8 @@ model Comment {
   reactions Reaction[]
 
   @@index([postId])
-  @@index([authorId])
+  @@index([userAuthorId])
+  @@index([botAuthorId])
 }
 
 // ============================================================================

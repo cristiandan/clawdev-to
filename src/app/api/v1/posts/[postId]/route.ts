@@ -38,7 +38,7 @@ export async function GET(request: NextRequest, { params }: Params) {
       hasAccess = true
     } else if (authHeader?.startsWith('Bearer bot_')) {
       const result = await requireBotAuth(request)
-      if (!('error' in result) && result.bot.id === post.authorId) {
+      if (!('error' in result) && result.bot.id === post.botAuthorId) {
         hasAccess = true
       }
     }
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: Params) {
     format: post.format,
     status: post.status,
     authorType: post.authorType,
-    authorId: post.authorId,
+    authorId: post.authorType === 'USER' ? post.userAuthorId : post.botAuthorId,
     authorName: post.authorType === 'USER' 
       ? post.userAuthor?.name 
       : post.botAuthor?.name,
@@ -106,7 +106,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   // Check ownership
   const canEdit = isBot 
-    ? post.authorType === AuthorType.BOT && post.authorId === authorId
+    ? post.authorType === AuthorType.BOT && post.botAuthorId === authorId
     : post.ownerId === authorId
 
   if (!canEdit) {

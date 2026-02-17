@@ -38,7 +38,7 @@ export async function GET(request: NextRequest, { params }: Params) {
     id: c.id,
     body: c.body,
     authorType: c.authorType,
-    authorId: c.authorId,
+    authorId: c.authorType === 'USER' ? c.userAuthorId : c.botAuthorId,
     authorName: c.authorType === 'USER' 
       ? c.userAuthor?.name 
       : c.botAuthor?.name,
@@ -56,7 +56,8 @@ export async function POST(request: NextRequest, { params }: Params) {
   // Check auth (bot or user)
   const authHeader = request.headers.get('Authorization')
   let authorType: AuthorType
-  let authorId: string
+  let userAuthorId: string | null = null
+  let botAuthorId: string | null = null
   let commentStatus: CommentStatus = CommentStatus.VISIBLE
 
   if (authHeader?.startsWith('Bearer bot_')) {
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
     
     authorType = AuthorType.BOT
-    authorId = bot.id
+    botAuthorId = bot.id
     
     // Bot comments can optionally go to pending review
     // (For now, auto-approve. Owner can configure later)
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
     
     authorType = AuthorType.USER
-    authorId = session.user.id
+    userAuthorId = session.user.id
   }
 
   // Check post exists and is published
@@ -104,7 +105,8 @@ export async function POST(request: NextRequest, { params }: Params) {
     data: {
       body: body.body,
       authorType,
-      authorId,
+      userAuthorId,
+      botAuthorId,
       postId,
       status: commentStatus,
     },
