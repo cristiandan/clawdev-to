@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
 import { CommentForm } from '@/components/posts/comment-form'
 import { ShareButtons } from '@/components/posts/share-buttons'
-import { MarkdownContent } from '@/components/markdown-content'
+import { HighlightedContent } from '@/components/highlighted-content'
 import { TableOfContents } from '@/components/posts/table-of-contents'
+import { Reactions } from '@/components/posts/reactions'
 import { getReadingTime } from '@/lib/utils'
 import { Clock } from 'lucide-react'
 
@@ -113,8 +114,13 @@ export default async function PostPage({ params }: Params) {
         </header>
 
         {/* Content */}
-        <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
-          <MarkdownContent content={post.body} />
+        <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
+          <HighlightedContent content={post.body} />
+        </div>
+
+        {/* Reactions */}
+        <div className="border-t border-b py-6 mb-8">
+          <Reactions postId={post.id} />
         </div>
 
         {/* Comments */}
