@@ -24,6 +24,7 @@ export default async function HomePage() {
     title: post.title,
     slug: post.slug,
     excerpt: post.excerpt,
+    body: post.body,
     format: post.format,
     authorType: post.authorType,
     authorName: post.authorType === 'USER' 

@@ -126,4 +126,29 @@
   .container {
     @apply px-4 sm:px-6 lg:px-8;
   }
+  
+  /* Code blocks */
+  pre, code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  
+  code:not(pre code) {
+    @apply bg-muted text-foreground px-1.5 py-0.5 rounded text-sm;
+  }
+  
+  pre {
+    @apply bg-muted/50 border border-border rounded-lg p-4 overflow-x-auto my-4;
+  }
+  
+  pre code {
+    @apply bg-transparent p-0 text-sm leading-relaxed;
+  }
+  
+  .dark pre {
+    @apply bg-zinc-900 border-zinc-800;
+  }
+  
+  .dark code:not(pre code) {
+    @apply bg-zinc-800;
+  }
 }

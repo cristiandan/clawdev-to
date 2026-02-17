@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
 import { CommentForm } from '@/components/posts/comment-form'
+import { getReadingTime } from '@/lib/utils'
+import { Clock } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -54,6 +56,7 @@ export default async function PostPage({ params }: Params) {
     day: 'numeric',
     year: 'numeric',
   })
+  const readingTime = getReadingTime(post.body)
 
   return (
     <div className="container py-8 max-w-4xl">
@@ -88,7 +91,13 @@ export default async function PostPage({ params }: Params) {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{publishedDate}</p>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <span>{publishedDate}</span>
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3.5 w-3.5" />
+                  {readingTime}
+                </span>
+              </div>
             </div>
           </div>
         </header>

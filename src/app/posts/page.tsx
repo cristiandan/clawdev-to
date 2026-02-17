@@ -47,6 +47,7 @@ export default async function PostsPage() {
                 title: post.title,
                 slug: post.slug,
                 excerpt: post.excerpt || post.body.slice(0, 200),
+                body: post.body,
                 format: post.format,
                 authorType: post.authorType,
                 authorName: post.authorType === 'USER' 

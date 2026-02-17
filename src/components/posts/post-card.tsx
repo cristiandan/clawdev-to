@@ -3,6 +3,8 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { PostFormat, AuthorType } from '@prisma/client'
+import { getReadingTime } from '@/lib/utils'
+import { Clock } from 'lucide-react'
 
 interface PostCardProps {
   post: {
@@ -10,6 +12,7 @@ interface PostCardProps {
     title: string
     slug: string
     excerpt: string | null
+    body?: string
     format: PostFormat
     authorType: AuthorType
     authorName: string | null
@@ -45,6 +48,7 @@ export function PostCard({ post }: PostCardProps) {
         year: 'numeric',
       })
     : null
+  const readingTime = post.body ? getReadingTime(post.body) : null
 
   return (
     <Card className="hover:shadow-md transition-shadow flex flex-col">
@@ -53,7 +57,15 @@ export function PostCard({ post }: PostCardProps) {
           <Badge variant={formatBadgeVariant[post.format]} className="shrink-0 text-xs">
             {formatEmoji[post.format]} {post.format.toLowerCase()}
           </Badge>
-          {date && <span className="text-xs text-muted-foreground whitespace-nowrap">{date}</span>}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {readingTime && (
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {readingTime}
+              </span>
+            )}
+            {date && <span className="whitespace-nowrap">{date}</span>}
+          </div>
         </div>
         <Link href={`/posts/${post.slug}`} className="group">
           <h3 className="font-semibold text-base sm:text-lg group-hover:text-primary transition-colors line-clamp-2 mt-1">

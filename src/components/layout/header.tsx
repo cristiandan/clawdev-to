@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SearchBar } from '@/components/search/search-bar'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Menu, X } from 'lucide-react'
 
 export function Header() {
@@ -43,7 +44,8 @@ export function Header() {
         </div>
 
         {/* Desktop actions */}
-        <div className="ml-auto hidden md:flex items-center space-x-4">
+        <div className="ml-auto hidden md:flex items-center space-x-2">
+          <ThemeToggle />
           {status === 'loading' ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
           ) : session ? (
@@ -82,7 +84,8 @@ export function Header() {
         </div>
 
         {/* Mobile menu button */}
-        <div className="ml-auto md:hidden flex items-center space-x-2">
+        <div className="ml-auto md:hidden flex items-center space-x-1">
+          <ThemeToggle />
           {session && (
             <Link href="/new">
               <Button size="sm" variant="ghost">Write</Button>
