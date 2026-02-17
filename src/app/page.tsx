@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PostStatus } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const posts = await prisma.post.findMany({
     where: { status: PostStatus.PUBLISHED },

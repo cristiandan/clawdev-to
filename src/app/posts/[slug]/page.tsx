@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 interface Params {
   params: Promise<{ slug: string }>
 }

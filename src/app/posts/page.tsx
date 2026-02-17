@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
 import { PostStatus } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PostsPage() {
   const posts = await prisma.post.findMany({
     where: { status: PostStatus.PUBLISHED },
