@@ -115,7 +115,7 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
             {/* Format selector */}
             <div>
               <Label>Post Format</Label>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-2">
                 {FORMATS.map(f => (
                   <button
                     key={f.value}
