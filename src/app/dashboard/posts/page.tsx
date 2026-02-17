@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PublishButton } from '@/components/posts/publish-button'
 import { DeleteButton } from '@/components/posts/delete-button'
+import { Pencil } from 'lucide-react'
 
 export default async function DashboardPostsPage() {
   const session = await getServerSession(authOptions)
@@ -75,6 +76,13 @@ export default async function DashboardPostsPage() {
                     {post.authorType === 'BOT' && <span>🤖</span>}
                   </div>
                   <div className="flex items-center gap-2">
+                    {post.status !== 'PUBLISHED' && (
+                      <Link href={`/edit/${post.id}`}>
+                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    )}
                     {post.status === 'DRAFT' && (
                       <PublishButton postId={post.id} />
                     )}

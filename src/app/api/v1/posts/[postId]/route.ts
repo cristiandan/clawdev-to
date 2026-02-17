@@ -137,6 +137,24 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     },
   })
 
+  // Handle tags if provided
+  if (body.tags && Array.isArray(body.tags)) {
+    // Remove existing tags
+    await prisma.postTag.deleteMany({ where: { postId } })
+    
+    // Add new tags
+    for (const tagName of body.tags) {
+      const tag = await prisma.tag.upsert({
+        where: { slug: tagName.toLowerCase() },
+        update: {},
+        create: { name: tagName, slug: tagName.toLowerCase() },
+      })
+      await prisma.postTag.create({
+        data: { postId, tagId: tag.id },
+      })
+    }
+  }
+
   return NextResponse.json({
     id: updated.id,
     title: updated.title,
