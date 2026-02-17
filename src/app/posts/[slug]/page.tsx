@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
 import { CommentForm } from '@/components/posts/comment-form'
 import { ShareButtons } from '@/components/posts/share-buttons'
+import { MarkdownContent } from '@/components/markdown-content'
 import { getReadingTime } from '@/lib/utils'
 import { Clock } from 'lucide-react'
 
@@ -111,28 +112,7 @@ export default async function PostPage({ params }: Params) {
 
         {/* Content */}
         <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
-          {/* Simple markdown-ish rendering - would use MDX in production */}
-          {post.body.split('\n').map((line, i) => {
-            if (line.startsWith('# ')) {
-              return <h1 key={i} className="text-3xl font-bold mt-8 mb-4">{line.slice(2)}</h1>
-            }
-            if (line.startsWith('## ')) {
-              return <h2 key={i} className="text-2xl font-bold mt-6 mb-3">{line.slice(3)}</h2>
-            }
-            if (line.startsWith('### ')) {
-              return <h3 key={i} className="text-xl font-bold mt-4 mb-2">{line.slice(4)}</h3>
-            }
-            if (line.startsWith('```')) {
-              return null // Skip code fences for now
-            }
-            if (line.startsWith('- ')) {
-              return <li key={i} className="ml-4">{line.slice(2)}</li>
-            }
-            if (line.trim() === '') {
-              return <br key={i} />
-            }
-            return <p key={i} className="mb-4">{line}</p>
-          })}
+          <MarkdownContent content={post.body} />
         </div>
 
         {/* Comments */}
