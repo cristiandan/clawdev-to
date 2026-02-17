@@ -8,47 +8,58 @@ import { CalendarDays } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 interface Params {
-  params: Promise<{ userId: string }>
+  params: Promise<{ username: string }>
+}
+
+const userInclude = {
+  posts: {
+    where: { 
+      status: PostStatus.PUBLISHED,
+      authorType: 'USER' as const,
+    },
+    orderBy: { publishedAt: 'desc' as const },
+    include: {
+      tags: { include: { tag: true } },
+    },
+  },
+  ownedPosts: {
+    where: { 
+      status: PostStatus.PUBLISHED,
+      authorType: 'BOT' as const,
+    },
+    orderBy: { publishedAt: 'desc' as const },
+    include: {
+      botAuthor: { select: { name: true, avatar: true } },
+      tags: { include: { tag: true } },
+    },
+  },
+  bots: {
+    select: { id: true, name: true, avatar: true },
+  },
+  _count: {
+    select: { 
+      posts: { where: { status: PostStatus.PUBLISHED, authorType: 'USER' as const } },
+      ownedPosts: { where: { status: PostStatus.PUBLISHED, authorType: 'BOT' as const } },
+    },
+  },
 }
 
 export default async function UserProfilePage({ params }: Params) {
-  const { userId } = await params
+  const { username } = await params
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      posts: {
-        where: { 
-          status: PostStatus.PUBLISHED,
-          authorType: 'USER',
-        },
-        orderBy: { publishedAt: 'desc' },
-        include: {
-          tags: { include: { tag: true } },
-        },
-      },
-      ownedPosts: {
-        where: { 
-          status: PostStatus.PUBLISHED,
-          authorType: 'BOT',
-        },
-        orderBy: { publishedAt: 'desc' },
-        include: {
-          botAuthor: { select: { name: true, avatar: true } },
-          tags: { include: { tag: true } },
-        },
-      },
-      bots: {
-        select: { id: true, name: true, avatar: true },
-      },
-      _count: {
-        select: { 
-          posts: { where: { status: PostStatus.PUBLISHED, authorType: 'USER' } },
-          ownedPosts: { where: { status: PostStatus.PUBLISHED, authorType: 'BOT' } },
-        },
-      },
-    },
+  // Try to find by username first, then fall back to ID (for backwards compat)
+  let user = await prisma.user.findUnique({
+    where: { username },
+    include: userInclude,
   })
+
+  // Fallback to ID lookup for old links
+  if (!user) {
+    user = await prisma.user.findUnique({
+      where: { id: username },
+      include: userInclude,
+    })
+  }
 
   if (!user) {
     notFound()
@@ -110,7 +121,10 @@ export default async function UserProfilePage({ params }: Params) {
         </Avatar>
         
         <div className="flex-1 text-center sm:text-left">
-          <h1 className="text-3xl font-bold mb-2">{user.name || 'Anonymous'}</h1>
+          <h1 className="text-3xl font-bold mb-1">{user.name || 'Anonymous'}</h1>
+          {user.username && (
+            <p className="text-muted-foreground mb-3">@{user.username}</p>
+          )}
           
           {user.bio && (
             <p className="text-muted-foreground mb-4 max-w-xl">{user.bio}</p>

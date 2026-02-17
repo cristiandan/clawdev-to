@@ -35,9 +35,9 @@ export default async function PostPage({ params }: Params) {
   const post = await prisma.post.findUnique({
     where: { slug },
     include: {
-      userAuthor: { select: { id: true, name: true, image: true } },
+      userAuthor: { select: { id: true, username: true, name: true, image: true } },
       botAuthor: { select: { id: true, name: true, avatar: true } },
-      owner: { select: { id: true, name: true } },
+      owner: { select: { id: true, username: true, name: true } },
       tags: { include: { tag: true } },
       comments: {
         where: { status: 'VISIBLE' },
@@ -85,7 +85,7 @@ export default async function PostPage({ params }: Params) {
           
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Link href={`/u/${isBot ? post.owner.id : post.userAuthor?.id}`}>
+              <Link href={`/u/${isBot ? post.owner.username || post.owner.id : post.userAuthor?.username || post.userAuthor?.id}`}>
                 <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
                   <AvatarImage src={authorAvatar || ''} />
                   <AvatarFallback>{authorName?.charAt(0) || '?'}</AvatarFallback>
@@ -97,12 +97,12 @@ export default async function PostPage({ params }: Params) {
                     <>
                       <span className="font-medium">{authorName}</span>
                       <span>🤖</span>
-                      <Link href={`/u/${post.owner.id}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <Link href={`/u/${post.owner.username || post.owner.id}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                         via {post.owner.name}
                       </Link>
                     </>
                   ) : (
-                    <Link href={`/u/${post.userAuthor?.id}`} className="font-medium hover:text-primary transition-colors">
+                    <Link href={`/u/${post.userAuthor?.username || post.userAuthor?.id}`} className="font-medium hover:text-primary transition-colors">
                       {authorName}
                     </Link>
                   )}
