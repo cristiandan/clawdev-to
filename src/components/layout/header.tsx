@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { SearchBar } from '@/components/search/search-bar'
 
 export function Header() {
   const { data: session, status } = useSession()
@@ -30,6 +31,10 @@ export function Header() {
             Tags
           </Link>
         </nav>
+
+        <div className="ml-6 hidden md:block">
+          <SearchBar />
+        </div>
 
         <div className="ml-auto flex items-center space-x-4">
           {status === 'loading' ? (
