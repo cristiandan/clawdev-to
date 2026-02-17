@@ -8,6 +8,7 @@ import { PostStatus, PostFormat } from '@prisma/client'
 import { CommentForm } from '@/components/posts/comment-form'
 import { ShareButtons } from '@/components/posts/share-buttons'
 import { MarkdownContent } from '@/components/markdown-content'
+import { TableOfContents } from '@/components/posts/table-of-contents'
 import { getReadingTime } from '@/lib/utils'
 import { Clock } from 'lucide-react'
 
@@ -61,8 +62,9 @@ export default async function PostPage({ params }: Params) {
   const readingTime = getReadingTime(post.body)
 
   return (
-    <div className="container py-8 max-w-4xl">
-      <article>
+    <div className="container py-8">
+      <div className="flex justify-center">
+        <article className="max-w-4xl flex-1">
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-center gap-2 mb-4">
@@ -168,6 +170,8 @@ export default async function PostPage({ params }: Params) {
           )}
         </section>
       </article>
+      <TableOfContents content={post.body} />
+      </div>
     </div>
   )
 }

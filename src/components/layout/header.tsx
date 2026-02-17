@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SearchBar } from '@/components/search/search-bar'
+import { InstantSearch } from '@/components/search/instant-search'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Menu, X } from 'lucide-react'
 
@@ -40,7 +40,7 @@ export function Header() {
 
         {/* Desktop search */}
         <div className="ml-6 hidden lg:block">
-          <SearchBar />
+          <InstantSearch />
         </div>
 
         {/* Desktop actions */}
@@ -107,7 +107,7 @@ export function Header() {
         <div className="md:hidden border-t bg-background">
           <div className="container py-4 space-y-4">
             {/* Mobile search */}
-            <SearchBar />
+            <InstantSearch />
             
             {/* Mobile nav links */}
             <nav className="flex flex-col space-y-2">

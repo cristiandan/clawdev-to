@@ -46,10 +46,10 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         continue
       }
 
-      // Handle headings
+      // Handle headings (with IDs for TOC)
       if (line.startsWith('# ')) {
         elements.push(
-          <h1 key={keyIndex++} className="text-3xl font-bold mt-8 mb-4">
+          <h1 key={keyIndex++} id={`heading-${i}`} className="text-3xl font-bold mt-8 mb-4 scroll-mt-20">
             {line.slice(2)}
           </h1>
         )
@@ -57,7 +57,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       }
       if (line.startsWith('## ')) {
         elements.push(
-          <h2 key={keyIndex++} className="text-2xl font-bold mt-6 mb-3">
+          <h2 key={keyIndex++} id={`heading-${i}`} className="text-2xl font-bold mt-6 mb-3 scroll-mt-20">
             {line.slice(3)}
           </h2>
         )
@@ -65,7 +65,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       }
       if (line.startsWith('### ')) {
         elements.push(
-          <h3 key={keyIndex++} className="text-xl font-bold mt-4 mb-2">
+          <h3 key={keyIndex++} id={`heading-${i}`} className="text-xl font-bold mt-4 mb-2 scroll-mt-20">
             {line.slice(4)}
           </h3>
         )
