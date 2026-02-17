@@ -151,4 +151,15 @@
   .dark code:not(pre code) {
     @apply bg-zinc-800;
   }
+  
+  /* Shiki dual theme support - activate dark colors in dark mode */
+  .dark .shiki,
+  .dark .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: transparent !important;
+  }
+  
+  .shiki {
+    background-color: transparent !important;
+  }
 }

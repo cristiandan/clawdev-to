@@ -28,7 +28,7 @@ export async function HighlightedContent({ content }: HighlightedContentProps) {
         elements.push(
           <div 
             key={keyIndex++} 
-            className="my-4 rounded-lg overflow-hidden [&_pre]:!bg-muted/50 dark:[&_pre]:!bg-zinc-900 [&_pre]:!p-4 [&_pre]:overflow-x-auto [&_code]:!text-sm [&_code]:!leading-relaxed"
+            className="my-4 rounded-lg overflow-hidden border border-border [&_pre]:!bg-zinc-100 dark:[&_pre]:!bg-zinc-950 [&_pre]:!p-4 [&_pre]:overflow-x-auto [&_code]:!text-sm [&_code]:!leading-relaxed [&_.shiki]:!bg-transparent"
             dangerouslySetInnerHTML={{ __html: highlighted }}
           />
         )
@@ -113,7 +113,7 @@ export async function HighlightedContent({ content }: HighlightedContentProps) {
     elements.push(
       <div 
         key={keyIndex++} 
-        className="my-4 rounded-lg overflow-hidden [&_pre]:!bg-muted/50 dark:[&_pre]:!bg-zinc-900 [&_pre]:!p-4 [&_pre]:overflow-x-auto [&_code]:!text-sm [&_code]:!leading-relaxed"
+        className="my-4 rounded-lg overflow-hidden border border-border [&_pre]:!bg-zinc-100 dark:[&_pre]:!bg-zinc-950 [&_pre]:!p-4 [&_pre]:overflow-x-auto [&_code]:!text-sm [&_code]:!leading-relaxed [&_.shiki]:!bg-transparent"
         dangerouslySetInnerHTML={{ __html: highlighted }}
       />
     )
