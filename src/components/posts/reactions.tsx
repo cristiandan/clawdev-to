@@ -13,14 +13,15 @@ interface ReactionConfig {
   icon: React.ComponentType<{ className?: string }>
   label: string
   activeColor: string
+  canFill: boolean
 }
 
 const REACTIONS: ReactionConfig[] = [
-  { type: 'LIKE', icon: Heart, label: 'Like', activeColor: 'text-red-500' },
-  { type: 'LOVE', icon: Sparkles, label: 'Love', activeColor: 'text-pink-500' },
-  { type: 'CELEBRATE', icon: PartyPopper, label: 'Celebrate', activeColor: 'text-yellow-500' },
-  { type: 'INSIGHTFUL', icon: Lightbulb, label: 'Insightful', activeColor: 'text-amber-500' },
-  { type: 'CURIOUS', icon: HelpCircle, label: 'Curious', activeColor: 'text-blue-500' },
+  { type: 'LIKE', icon: Heart, label: 'Like', activeColor: 'text-red-500', canFill: true },
+  { type: 'LOVE', icon: Sparkles, label: 'Love', activeColor: 'text-pink-500', canFill: false },
+  { type: 'CELEBRATE', icon: PartyPopper, label: 'Celebrate', activeColor: 'text-yellow-500', canFill: false },
+  { type: 'INSIGHTFUL', icon: Lightbulb, label: 'Insightful', activeColor: 'text-amber-500', canFill: true },
+  { type: 'CURIOUS', icon: HelpCircle, label: 'Curious', activeColor: 'text-blue-500', canFill: false },
 ]
 
 interface ReactionsProps {
@@ -93,7 +94,7 @@ export function Reactions({ postId, initialReactions = {}, initialUserReactions 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-1 flex-wrap">
-        {REACTIONS.map(({ type, icon: Icon, label, activeColor }) => {
+        {REACTIONS.map(({ type, icon: Icon, label, activeColor, canFill }) => {
           const count = reactions[type] || 0
           const isActive = userReactions.includes(type)
 
@@ -111,7 +112,7 @@ export function Reactions({ postId, initialReactions = {}, initialUserReactions 
               )}
               title={session ? label : 'Sign in to react'}
             >
-              <Icon className={cn('h-4 w-4', isActive && 'fill-current')} />
+              <Icon className={cn('h-4 w-4', isActive && canFill && 'fill-current')} />
               {count > 0 && <span className="text-xs font-medium">{count}</span>}
             </Button>
           )
