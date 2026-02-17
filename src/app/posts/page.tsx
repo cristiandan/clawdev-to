@@ -59,6 +59,7 @@ export default async function PostsPage() {
                 ownerName: post.owner.name ?? null,
                 tags: post.tags.map(pt => pt.tag.name),
                 publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+                viewCount: post.viewCount,
               }}
             />
           ))}

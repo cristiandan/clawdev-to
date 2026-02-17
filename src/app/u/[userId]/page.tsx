@@ -73,6 +73,7 @@ export default async function UserProfilePage({ params }: Params) {
     ownerName: null,
     tags: post.tags.map(pt => pt.tag.name),
     publishedAt: post.publishedAt?.toISOString() || null,
+    viewCount: post.viewCount,
   }))
 
   const botPosts = user.ownedPosts.map(post => ({
@@ -88,6 +89,7 @@ export default async function UserProfilePage({ params }: Params) {
     ownerName: user.name,
     tags: post.tags.map(pt => pt.tag.name),
     publishedAt: post.publishedAt?.toISOString() || null,
+    viewCount: post.viewCount,
   }))
 
   const allPosts = [...userPosts, ...botPosts].sort((a, b) => {

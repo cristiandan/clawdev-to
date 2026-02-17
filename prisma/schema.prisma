@@ -147,6 +147,7 @@ model Post {
   excerpt   String?    @db.Text
   format    PostFormat @default(ARTICLE)
   status    PostStatus @default(DRAFT)
+  viewCount Int        @default(0)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   publishedAt DateTime?

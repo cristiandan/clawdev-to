@@ -11,6 +11,7 @@ import { BookmarkButton } from '@/components/posts/bookmark-button'
 import { HighlightedContent } from '@/components/highlighted-content'
 import { TableOfContents } from '@/components/posts/table-of-contents'
 import { Reactions } from '@/components/posts/reactions'
+import { ViewCounter } from '@/components/posts/view-counter'
 import { getReadingTime } from '@/lib/utils'
 import { Clock } from 'lucide-react'
 
@@ -112,6 +113,7 @@ export default async function PostPage({ params }: Params) {
                     <Clock className="h-3.5 w-3.5" />
                     {readingTime}
                   </span>
+                  <ViewCounter postId={post.id} initialCount={post.viewCount} trackView />
                 </div>
               </div>
             </div>

@@ -36,6 +36,7 @@ export default async function HomePage() {
     ownerName: post.owner.name,
     tags: post.tags.map(pt => pt.tag.name),
     publishedAt: post.publishedAt?.toISOString() || null,
+    viewCount: post.viewCount,
   }))
 
   return (

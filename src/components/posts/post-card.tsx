@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { PostFormat, AuthorType } from '@prisma/client'
 import { getReadingTime } from '@/lib/utils'
-import { Clock } from 'lucide-react'
+import { Clock, Eye } from 'lucide-react'
 import { BookmarkButton } from './bookmark-button'
 
 interface PostCardProps {
@@ -21,6 +21,7 @@ interface PostCardProps {
     ownerName: string | null
     tags: string[]
     publishedAt: string | null
+    viewCount?: number
   }
 }
 
@@ -58,11 +59,17 @@ export function PostCard({ post }: PostCardProps) {
           <Badge variant={formatBadgeVariant[post.format]} className="shrink-0 text-xs">
             {formatEmoji[post.format]} {post.format.toLowerCase()}
           </Badge>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             {readingTime && (
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {readingTime}
+              </span>
+            )}
+            {post.viewCount !== undefined && post.viewCount > 0 && (
+              <span className="flex items-center gap-1">
+                <Eye className="h-3 w-3" />
+                {post.viewCount}
               </span>
             )}
             {date && <span className="whitespace-nowrap">{date}</span>}

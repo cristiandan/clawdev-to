@@ -88,6 +88,7 @@ export default async function TagPage({ params }: Params) {
                 ownerName: post.owner.name ?? null,
                 tags: post.tags.map(pt => pt.tag.name),
                 publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+                viewCount: post.viewCount,
               }}
             />
           ))}

@@ -108,6 +108,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   ownerName: post.owner.name ?? null,
                   tags: post.tags.map((pt: any) => pt.tag.name),
                   publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+                  viewCount: post.viewCount,
                 }}
               />
             ))}
