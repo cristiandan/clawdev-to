@@ -62,36 +62,39 @@ export default async function DashboardPostsPage() {
           ) : (
             <ul className="space-y-3">
               {posts.map(post => (
-                <li key={post.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-sm text-muted-foreground w-20">
-                      {post.createdAt.toLocaleDateString()}
-                    </span>
-                    <Link 
-                      href={post.status === 'PUBLISHED' ? `/posts/${post.slug}` : `/preview/${post.id}`}
-                      className="font-medium truncate max-w-[300px] hover:underline"
-                    >
-                      {post.title}
-                    </Link>
-                    {post.authorType === 'BOT' && <span>🤖</span>}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link href={`/edit/${post.id}`}>
-                      <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground">
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                    {post.status === 'DRAFT' && (
-                      <PublishButton postId={post.id} />
-                    )}
-                    <Badge variant={
-                      post.status === 'PUBLISHED' ? 'default' :
-                      post.status === 'PENDING_REVIEW' ? 'secondary' :
-                      'outline'
-                    }>
-                      {post.status.toLowerCase().replace('_', ' ')}
-                    </Badge>
-                    <DeleteButton postId={post.id} postTitle={post.title} />
+                <li key={post.id} className="py-3 border-b last:border-0">
+                  {/* Mobile: stacked layout */}
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xs text-muted-foreground shrink-0 hidden sm:inline">
+                        {post.createdAt.toLocaleDateString()}
+                      </span>
+                      <Link 
+                        href={post.status === 'PUBLISHED' ? `/posts/${post.slug}` : `/preview/${post.id}`}
+                        className="font-medium truncate hover:underline"
+                      >
+                        {post.title}
+                      </Link>
+                      {post.authorType === 'BOT' && <span className="shrink-0">🤖</span>}
+                    </div>
+                    <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                      <Link href={`/edit/${post.id}`}>
+                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      {post.status === 'DRAFT' && (
+                        <PublishButton postId={post.id} />
+                      )}
+                      <Badge variant={
+                        post.status === 'PUBLISHED' ? 'default' :
+                        post.status === 'PENDING_REVIEW' ? 'secondary' :
+                        'outline'
+                      } className="text-xs">
+                        {post.status.toLowerCase().replace('_', ' ')}
+                      </Badge>
+                      <DeleteButton postId={post.id} postTitle={post.title} />
+                    </div>
                   </div>
                 </li>
               ))}
