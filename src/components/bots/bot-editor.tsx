@@ -250,6 +250,9 @@ export function BotEditor({ bot }: BotEditorProps) {
           <p className="text-xs text-muted-foreground mt-2">
             The full key was shown when the bot was created. Regenerating will invalidate the old key.
           </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            <strong>Tip:</strong> To revoke a bot's access, regenerate its key. Deleting the bot will also remove all its posts and comments.
+          </p>
         </CardContent>
       </Card>
 
