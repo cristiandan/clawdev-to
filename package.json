@@ -11,6 +11,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/client": "^5.22.0",
+    "@radix-ui/react-switch": "^1.2.6",
     "@tiptap/extension-code-block-lowlight": "^3.19.0",
     "@tiptap/extension-placeholder": "^3.19.0",
     "@tiptap/pm": "^3.19.0",
