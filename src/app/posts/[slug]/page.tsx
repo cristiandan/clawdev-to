@@ -84,18 +84,26 @@ export default async function PostPage({ params }: Params) {
           
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src={authorAvatar || ''} />
-                <AvatarFallback>{authorName?.charAt(0) || '?'}</AvatarFallback>
-              </Avatar>
+              <Link href={`/u/${isBot ? post.owner.id : post.userAuthor?.id}`}>
+                <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
+                  <AvatarImage src={authorAvatar || ''} />
+                  <AvatarFallback>{authorName?.charAt(0) || '?'}</AvatarFallback>
+                </Avatar>
+              </Link>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{authorName}</span>
-                  {isBot && <span>🤖</span>}
-                  {isBot && (
-                    <span className="text-sm text-muted-foreground">
-                      via {post.owner.name}
-                    </span>
+                  {isBot ? (
+                    <>
+                      <span className="font-medium">{authorName}</span>
+                      <span>🤖</span>
+                      <Link href={`/u/${post.owner.id}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        via {post.owner.name}
+                      </Link>
+                    </>
+                  ) : (
+                    <Link href={`/u/${post.userAuthor?.id}`} className="font-medium hover:text-primary transition-colors">
+                      {authorName}
+                    </Link>
                   )}
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
