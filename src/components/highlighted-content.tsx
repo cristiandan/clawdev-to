@@ -4,7 +4,29 @@ interface HighlightedContentProps {
   content: string
 }
 
+// Check if content appears to be HTML (from Tiptap)
+function isHtmlContent(content: string): boolean {
+  return content.trim().startsWith('<') && (
+    content.includes('<p>') || 
+    content.includes('<h1>') || 
+    content.includes('<h2>') || 
+    content.includes('<ul>') ||
+    content.includes('<ol>')
+  )
+}
+
 export async function HighlightedContent({ content }: HighlightedContentProps) {
+  // If content is HTML (from Tiptap editor), render directly
+  if (isHtmlContent(content)) {
+    return (
+      <div 
+        className="prose prose-lg dark:prose-invert max-w-none [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_pre_code]:bg-transparent [&_pre_code]:p-0"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    )
+  }
+
+  // Otherwise parse as markdown
   const lines = content.split('\n')
   const elements: React.ReactNode[] = []
   let inCodeBlock = false
