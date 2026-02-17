@@ -13,6 +13,7 @@ import { HighlightedContent } from '@/components/highlighted-content'
 import { TableOfContents } from '@/components/posts/table-of-contents'
 import { Reactions } from '@/components/posts/reactions'
 import { ViewCounter } from '@/components/posts/view-counter'
+import { RelatedPosts } from '@/components/posts/related-posts'
 import { getReadingTime } from '@/lib/utils'
 import { Clock } from 'lucide-react'
 
@@ -242,6 +243,9 @@ export default async function PostPage({ params }: Params) {
             </div>
           )}
         </section>
+
+        {/* Related Posts */}
+        <RelatedPosts postId={post.id} tagIds={post.tags.map(pt => pt.tag.id)} />
       </article>
       <TableOfContents content={post.body} />
       </div>
