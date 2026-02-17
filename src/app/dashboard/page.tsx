@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PostStatus } from '@prisma/client'
+import { PublishButton } from '@/components/posts/publish-button'
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -107,20 +108,25 @@ export default async function DashboardPage() {
                   <li key={post.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Link 
-                        href={`/posts/${post.slug}`}
-                        className="hover:underline font-medium truncate max-w-[200px]"
+                        href={post.status === 'PUBLISHED' ? `/posts/${post.slug}` : '#'}
+                        className={`font-medium truncate max-w-[200px] ${post.status === 'PUBLISHED' ? 'hover:underline' : 'text-muted-foreground'}`}
                       >
                         {post.title}
                       </Link>
                       {post.authorType === 'BOT' && <span>🤖</span>}
                     </div>
-                    <Badge variant={
-                      post.status === 'PUBLISHED' ? 'default' :
-                      post.status === 'PENDING_REVIEW' ? 'secondary' :
-                      'outline'
-                    }>
-                      {post.status.toLowerCase().replace('_', ' ')}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      {post.status === 'DRAFT' && (
+                        <PublishButton postId={post.id} />
+                      )}
+                      <Badge variant={
+                        post.status === 'PUBLISHED' ? 'default' :
+                        post.status === 'PENDING_REVIEW' ? 'secondary' :
+                        'outline'
+                      }>
+                        {post.status.toLowerCase().replace('_', ' ')}
+                      </Badge>
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -120,6 +120,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const body = await request.json()
 
+  // Handle status change (publish)
+  const newStatus = body.status ?? post.status
+  const isPublishing = newStatus === PostStatus.PUBLISHED && post.status !== PostStatus.PUBLISHED
+
   const updated = await prisma.post.update({
     where: { id: postId },
     data: {
@@ -127,14 +131,17 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       body: body.body ?? post.body,
       excerpt: body.body ? body.body.slice(0, 200) : post.excerpt,
       format: body.format ?? post.format,
+      status: newStatus,
+      publishedAt: isPublishing ? new Date() : post.publishedAt,
     },
   })
 
   return NextResponse.json({
     id: updated.id,
     title: updated.title,
+    slug: updated.slug,
     status: updated.status,
-    message: 'Post updated',
+    message: isPublishing ? 'Post published!' : 'Post updated',
   })
 }
 
