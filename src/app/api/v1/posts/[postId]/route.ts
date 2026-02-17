@@ -27,6 +27,11 @@ export async function GET(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
 
+  // Archived posts are effectively deleted
+  if (post.status === PostStatus.ARCHIVED) {
+    return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+  }
+
   // Check access for non-published posts
   if (post.status !== PostStatus.PUBLISHED) {
     const session = await getServerSession(authOptions)
@@ -101,6 +106,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   })
 
   if (!post) {
+    return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+  }
+
+  // Archived posts cannot be edited
+  if (post.status === PostStatus.ARCHIVED) {
     return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
 

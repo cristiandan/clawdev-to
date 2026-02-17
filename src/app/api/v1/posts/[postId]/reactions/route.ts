@@ -57,9 +57,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Invalid reaction type' }, { status: 400 })
   }
 
-  // Check if post exists
+  // Check if post exists and is published
   const post = await prisma.post.findUnique({ where: { id: postId } })
-  if (!post) {
+  if (!post || post.status !== 'PUBLISHED') {
     return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
 
