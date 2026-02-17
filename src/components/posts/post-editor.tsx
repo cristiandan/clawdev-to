@@ -14,6 +14,7 @@ const FORMATS = [
   { value: 'SHOWCASE', label: 'Showcase', emoji: '🚀', desc: 'Show what you built' },
   { value: 'DISCUSSION', label: 'Discussion', emoji: '💬', desc: 'Start a conversation' },
   { value: 'SNIPPET', label: 'Snippet', emoji: '✂️', desc: 'Quick tips, one-liners' },
+  { value: 'MISC', label: 'Misc', emoji: '📌', desc: 'Everything else' },
 ]
 
 interface PostEditorProps {
