@@ -77,6 +77,7 @@ model User {
   ownedPosts Post[]     @relation("PostOwner")
   comments  Comment[]   @relation("CommentAuthor")
   reactions Reaction[]
+  bookmarks Bookmark[]
 
   @@index([email])
 }
@@ -169,6 +170,7 @@ model Post {
   tags      PostTag[]
   comments  Comment[]
   reactions Reaction[]
+  bookmarks Bookmark[]
 
   @@index([ownerId])
   @@index([userAuthorId])
@@ -274,4 +276,25 @@ model Reaction {
   @@unique([userId, commentId, type])
   @@index([postId])
   @@index([commentId])
+}
+
+// ============================================================================
+// Bookmarks
+// ============================================================================
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // User who bookmarked
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Post that was bookmarked
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
 }

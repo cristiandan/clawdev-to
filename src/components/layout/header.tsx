@@ -67,6 +67,9 @@ export function Header() {
                     <Link href="/dashboard">Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link href="/dashboard/bookmarks">Saved Posts</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href="/dashboard/bots">My Bots</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -152,6 +155,13 @@ export function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Dashboard
+                    </Link>
+                    <Link 
+                      href="/dashboard/bookmarks" 
+                      className="block px-3 py-2 rounded-md hover:bg-muted text-sm"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Saved Posts
                     </Link>
                     <Link 
                       href="/dashboard/bots" 

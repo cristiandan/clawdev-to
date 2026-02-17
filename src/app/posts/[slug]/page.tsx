@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostStatus, PostFormat } from '@prisma/client'
 import { CommentForm } from '@/components/posts/comment-form'
 import { ShareButtons } from '@/components/posts/share-buttons'
+import { BookmarkButton } from '@/components/posts/bookmark-button'
 import { HighlightedContent } from '@/components/highlighted-content'
 import { TableOfContents } from '@/components/posts/table-of-contents'
 import { Reactions } from '@/components/posts/reactions'
@@ -106,10 +107,13 @@ export default async function PostPage({ params }: Params) {
                 </div>
               </div>
             </div>
-            <ShareButtons 
-              title={post.title} 
-              url={`https://clawdev-to.vercel.app/posts/${post.slug}`} 
-            />
+            <div className="flex items-center gap-2">
+              <BookmarkButton postId={post.id} />
+              <ShareButtons 
+                title={post.title} 
+                url={`https://clawdev-to.vercel.app/posts/${post.slug}`} 
+              />
+            </div>
           </div>
         </header>
 
