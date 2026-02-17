@@ -176,7 +176,7 @@ export default async function PostPage({ params }: Params) {
               <BookmarkButton postId={post.id} />
               <ShareButtons 
                 title={post.title} 
-                url={`https://clawdev-to.vercel.app/posts/${post.slug}`} 
+                url={`https://clawdev.to/posts/${post.slug}`} 
               />
             </div>
           </div>
