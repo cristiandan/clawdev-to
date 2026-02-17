@@ -65,8 +65,8 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
         return
       }
 
-      // If publishing, make a second call to publish
-      if (publish) {
+      // If publishing (and not already published), make a second call to publish
+      if (publish && initialData?.status !== 'PUBLISHED') {
         const publishRes = await fetch(`/api/v1/posts/${data.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,8 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
         }
       }
 
-      router.push(publish ? `/posts/${data.slug}` : '/dashboard/posts')
+      // Redirect to the post if publishing/published, otherwise to dashboard
+      router.push((publish || initialData?.status === 'PUBLISHED') ? `/posts/${data.slug}` : '/dashboard/posts')
       router.refresh()
     } catch (err) {
       setError('Something went wrong')
@@ -94,6 +95,7 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
   }
 
   const isPublished = initialData?.status === 'PUBLISHED'
+  const canEdit = true // Allow editing all posts including published
 
   return (
     <div className="container py-8 max-w-3xl">
@@ -119,7 +121,7 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
                     key={f.value}
                     type="button"
                     onClick={() => !isPublished && setFormat(f.value)}
-                    disabled={isPublished}
+                    disabled={false}
                     className={`p-3 rounded-md border text-center transition-colors ${
                       format === f.value 
                         ? 'border-primary bg-primary/10' 
@@ -146,7 +148,7 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
                 onChange={e => setTitle(e.target.value)}
                 placeholder="What's your post about?"
                 className="text-lg"
-                disabled={isPublished}
+                disabled={false}
                 required 
               />
             </div>
@@ -159,7 +161,7 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
                   content={body}
                   onChange={setBody}
                   placeholder="Write your post content here..."
-                  disabled={isPublished}
+                  disabled={false}
                 />
               </div>
               <p className="text-xs text-muted-foreground mt-2">
@@ -175,7 +177,7 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
                 value={tags}
                 onChange={e => setTags(e.target.value)}
                 placeholder="clawdbot, automation, tutorial (comma separated)"
-                disabled={isPublished}
+                disabled={false}
               />
             </div>
 
@@ -183,34 +185,25 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
               <p className="text-sm text-red-500">{error}</p>
             )}
 
-            {isPublished ? (
-              <div className="pt-4">
-                <p className="text-sm text-muted-foreground">
-                  Published posts cannot be edited. Contact support if you need to make changes.
-                </p>
-                <Button type="button" variant="outline" onClick={() => router.back()} className="mt-2">
-                  ← Back
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between pt-4 border-t">
-                <Button type="button" variant="ghost" onClick={() => router.back()}>
-                  Cancel
-                </Button>
-                <div className="flex gap-2">
+            <div className="flex items-center justify-between pt-4 border-t">
+              <Button type="button" variant="ghost" onClick={() => router.back()}>
+                Cancel
+              </Button>
+              <div className="flex gap-2">
+                {!isPublished && (
                   <Button type="submit" variant="outline" disabled={loading}>
                     {loading ? 'Saving...' : 'Save Draft'}
                   </Button>
-                  <Button 
-                    type="button" 
-                    disabled={loading || !title.trim() || !body.trim()} 
-                    onClick={() => handleSave(true)}
-                  >
-                    {loading ? 'Publishing...' : 'Publish'}
-                  </Button>
-                </div>
+                )}
+                <Button 
+                  type="button" 
+                  disabled={loading || !title.trim() || !body.trim()} 
+                  onClick={() => handleSave(true)}
+                >
+                  {loading ? 'Saving...' : isPublished ? 'Save Changes' : 'Publish'}
+                </Button>
               </div>
-            )}
+            </div>
           </form>
         </CardContent>
       </Card>

@@ -113,10 +113,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  // Can only edit drafts or pending posts
-  if (post.status === PostStatus.PUBLISHED) {
-    return NextResponse.json({ error: 'Cannot edit published posts' }, { status: 400 })
-  }
+  // Users can now edit published posts too
 
   const body = await request.json()
 
