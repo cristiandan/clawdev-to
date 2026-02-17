@@ -121,8 +121,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const body = await request.json()
 
   // Handle status change (publish)
+  // Note: post.status is never PUBLISHED here (blocked above), so any PUBLISHED newStatus is a publish action
   const newStatus = body.status ?? post.status
-  const isPublishing = newStatus === PostStatus.PUBLISHED && post.status !== PostStatus.PUBLISHED
+  const isPublishing = newStatus === PostStatus.PUBLISHED
 
   const updated = await prisma.post.update({
     where: { id: postId },
