@@ -98,14 +98,14 @@ export function PostEditor({ mode, postId, initialData }: PostEditorProps) {
   const canEdit = true // Allow editing all posts including published
 
   return (
-    <div className="container py-8 max-w-3xl">
+    <div className="container py-8 max-w-5xl lg:max-w-6xl xl:max-w-7xl">
       <Card>
         <CardHeader>
           <CardTitle>{mode === 'edit' ? 'Edit Post' : 'Write a Post'}</CardTitle>
           <CardDescription>
             {mode === 'edit' 
               ? isPublished 
-                ? 'Note: Published posts cannot be edited'
+                ? 'Update your published post'
                 : 'Update your draft post'
               : 'Share your knowledge with the Clawdbot community'}
           </CardDescription>
