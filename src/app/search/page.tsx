@@ -3,17 +3,22 @@ import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
 import { PostStatus } from '@prisma/client'
 import { SearchInput } from '@/components/search/search-input'
+import { SearchClient } from './search-client'
 
 export const dynamic = 'force-dynamic'
 
 interface SearchPageProps {
-  searchParams: Promise<{ q?: string; tag?: string; format?: string }>
+  searchParams: Promise<{ q?: string; tag?: string; format?: string; page?: string; limit?: string }>
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q, tag, format } = await searchParams
+  const { q, tag, format, page: pageParam, limit: limitParam } = await searchParams
+  
+  const page = parseInt(pageParam || '1')
+  const limit = parseInt(limitParam || '20')
   
   let posts: any[] = []
+  let total = 0
   let searchPerformed = false
 
   if (q || tag) {
@@ -42,10 +47,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       where.format = format
     }
 
+    total = await prisma.post.count({ where })
+
     posts = await prisma.post.findMany({
       where,
       orderBy: { publishedAt: 'desc' },
-      take: 50,
+      take: limit,
+      skip: (page - 1) * limit,
       include: {
         userAuthor: { select: { id: true, name: true, image: true } },
         botAuthor: { select: { id: true, name: true, avatar: true } },
@@ -55,72 +63,41 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     })
   }
 
+  const serializedPosts = posts.map(post => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt || post.body.slice(0, 200),
+    body: post.body,
+    format: post.format,
+    authorType: post.authorType,
+    authorName: post.authorType === 'USER' 
+      ? post.userAuthor?.name || 'Anonymous'
+      : post.botAuthor?.name || 'Bot',
+    authorAvatar: post.authorType === 'USER'
+      ? post.userAuthor?.image ?? null
+      : post.botAuthor?.avatar ?? null,
+    ownerName: post.owner.name ?? null,
+    tags: post.tags.map((pt: any) => pt.tag.name),
+    publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+    viewCount: post.viewCount,
+  }))
+
   return (
-    <div className="container py-8 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">Search</h1>
-        <SearchInput defaultValue={q || ''} />
-      </div>
-
-      {tag && (
-        <div className="mb-6">
-          <p className="text-muted-foreground">
-            Filtering by tag: <span className="font-medium text-foreground">#{tag}</span>
-            <Link href="/search" className="ml-2 text-sm hover:underline">
-              (clear)
-            </Link>
-          </p>
-        </div>
-      )}
-
-      {searchPerformed ? (
-        posts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-2">
-              No posts found for &quot;{q || tag}&quot;
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Try a different search term or browse <Link href="/posts" className="underline">all posts</Link>
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Found {posts.length} post{posts.length === 1 ? '' : 's'}
-            </p>
-            {posts.map(post => (
-              <PostCard
-                key={post.id}
-                post={{
-                  id: post.id,
-                  title: post.title,
-                  slug: post.slug,
-                  excerpt: post.excerpt || post.body.slice(0, 200),
-                  body: post.body,
-                  format: post.format,
-                  authorType: post.authorType,
-                  authorName: post.authorType === 'USER' 
-                    ? post.userAuthor?.name || 'Anonymous'
-                    : post.botAuthor?.name || 'Bot',
-                  authorAvatar: post.authorType === 'USER'
-                    ? post.userAuthor?.image ?? null
-                    : post.botAuthor?.avatar ?? null,
-                  ownerName: post.owner.name ?? null,
-                  tags: post.tags.map((pt: any) => pt.tag.name),
-                  publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
-                  viewCount: post.viewCount,
-                }}
-              />
-            ))}
-          </div>
-        )
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            Enter a search term to find posts
-          </p>
-        </div>
-      )}
-    </div>
+    <SearchClient
+      posts={serializedPosts}
+      pagination={{
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      }}
+      filters={{
+        q: q || '',
+        tag: tag || '',
+        format: format || '',
+      }}
+      searchPerformed={searchPerformed}
+    />
   )
 }
