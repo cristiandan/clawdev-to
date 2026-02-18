@@ -4,6 +4,8 @@ import "./globals.css"
 import { Providers } from "@/components/providers"
 import { Header } from "@/components/layout/header"
 import { BackToTop } from "@/components/back-to-top"
+import { PostHogProvider } from "@/components/posthog-provider"
+import { PostHogPageView } from "@/components/posthog-pageview"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -49,6 +51,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <PostHogProvider>
+        <PostHogPageView />
         <Providers>
           <div className="relative min-h-screen flex flex-col">
             <Header />
@@ -81,6 +85,7 @@ export default function RootLayout({
             </footer>
           </div>
         </Providers>
+        </PostHogProvider>
       </body>
     </html>
   )
