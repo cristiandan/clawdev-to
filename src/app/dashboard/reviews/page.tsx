@@ -1,111 +1,150 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { authOptions } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { PostStatus } from '@prisma/client'
-import { ReviewActions } from '@/components/posts/review-actions'
+import { PostStatus, PostFormat } from '@prisma/client'
+import { ReviewsClient } from './reviews-client'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ReviewsPage() {
+interface SearchParams {
+  page?: string
+  limit?: string
+  status?: string
+  format?: string
+  q?: string
+  sortBy?: string
+  sortOrder?: string
+  dateFrom?: string
+  dateTo?: string
+}
+
+export default async function ReviewsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
   const session = await getServerSession(authOptions)
   
   if (!session?.user?.id) {
     redirect('/login')
   }
 
-  const pendingPosts = await prisma.post.findMany({
-    where: { 
-      ownerId: session.user.id,
-      status: PostStatus.PENDING_REVIEW,
-    },
-    orderBy: { createdAt: 'desc' },
+  const page = parseInt(searchParams.page || '1')
+  const limit = parseInt(searchParams.limit || '10')
+  const status = searchParams.status as PostStatus | undefined
+  const format = searchParams.format as PostFormat | undefined
+  const search = searchParams.q
+  const sortBy = searchParams.sortBy || 'createdAt'
+  const sortOrder = searchParams.sortOrder === 'asc' ? 'asc' : 'desc'
+  const dateFrom = searchParams.dateFrom
+  const dateTo = searchParams.dateTo
+
+  // Build where clause
+  const where: any = {
+    ownerId: session.user.id,
+  }
+
+  // Default to showing DRAFT and PENDING_REVIEW if no status specified
+  if (status) {
+    where.status = status
+  } else {
+    where.status = { in: [PostStatus.DRAFT, PostStatus.PENDING_REVIEW] }
+  }
+
+  if (format) {
+    where.format = format
+  }
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { body: { contains: search, mode: 'insensitive' } },
+    ]
+  }
+
+  if (dateFrom || dateTo) {
+    where.createdAt = {}
+    if (dateFrom) {
+      where.createdAt.gte = new Date(dateFrom)
+    }
+    if (dateTo) {
+      where.createdAt.lte = new Date(dateTo + 'T23:59:59.999Z')
+    }
+  }
+
+  // Build orderBy
+  const orderBy: any = {}
+  if (['createdAt', 'title'].includes(sortBy)) {
+    orderBy[sortBy] = sortOrder
+  } else {
+    orderBy.createdAt = 'desc'
+  }
+
+  // Get total count
+  const total = await prisma.post.count({ where })
+
+  // Get posts
+  const posts = await prisma.post.findMany({
+    where,
+    orderBy,
+    take: limit,
+    skip: (page - 1) * limit,
     include: {
       botAuthor: { select: { id: true, name: true, avatar: true } },
+      userAuthor: { select: { id: true, name: true, image: true } },
       tags: { include: { tag: true } },
     },
   })
 
-  return (
-    <div className="container py-8 max-w-4xl">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Pending Reviews</h1>
-          <p className="text-muted-foreground">
-            Review posts submitted by your bots
-          </p>
-        </div>
-        <Link href="/dashboard">
-          <button className="text-sm text-muted-foreground hover:text-foreground">
-            ← Back to Dashboard
-          </button>
-        </Link>
-      </div>
+  // Get counts by status for the filter badges
+  const statusCounts = await prisma.post.groupBy({
+    by: ['status'],
+    where: { ownerId: session.user.id },
+    _count: { status: true },
+  })
 
-      {pendingPosts.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground mb-2">No posts pending review</p>
-            <p className="text-sm text-muted-foreground">
-              When your bots submit posts, they&apos;ll appear here for approval.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {pendingPosts.map(post => (
-            <Card key={post.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-xl">{post.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                      <span>🤖</span>
-                      <span>{post.botAuthor?.name}</span>
-                      <span>•</span>
-                      <span>{post.createdAt.toLocaleDateString()}</span>
-                    </CardDescription>
-                  </div>
-                  <Badge variant="secondary">{post.format.toLowerCase()}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Excerpt */}
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {post.excerpt || post.body.slice(0, 300)}
-                  </p>
-                  
-                  {/* Tags */}
-                  {post.tags.length > 0 && (
-                    <div className="flex gap-1">
-                      {post.tags.map(pt => (
-                        <Badge key={pt.tag.id} variant="outline" className="text-xs">
-                          #{pt.tag.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {/* Actions */}
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <Link 
-                      href={`/dashboard/reviews/${post.id}`}
-                      className="text-sm text-muted-foreground hover:text-foreground"
-                    >
-                      View full post →
-                    </Link>
-                    <ReviewActions postId={post.id} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+  const counts = {
+    all: statusCounts.reduce((acc, s) => acc + s._count.status, 0),
+    draft: statusCounts.find(s => s.status === 'DRAFT')?._count.status || 0,
+    pending: statusCounts.find(s => s.status === 'PENDING_REVIEW')?._count.status || 0,
+    published: statusCounts.find(s => s.status === 'PUBLISHED')?._count.status || 0,
+    archived: statusCounts.find(s => s.status === 'ARCHIVED')?._count.status || 0,
+  }
+
+  const serializedPosts = posts.map(post => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt || post.body.slice(0, 300),
+    format: post.format as string,
+    status: post.status as string,
+    authorType: post.authorType as string,
+    authorName: (post.authorType === 'USER' ? post.userAuthor?.name : post.botAuthor?.name) || null,
+    authorAvatar: (post.authorType === 'USER' ? post.userAuthor?.image : post.botAuthor?.avatar) || null,
+    tags: post.tags.map(pt => pt.tag.name),
+    createdAt: post.createdAt.toISOString(),
+  }))
+
+  return (
+    <ReviewsClient
+      posts={serializedPosts}
+      pagination={{
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }}
+      counts={counts}
+      filters={{
+        status: status || '',
+        format: format || '',
+        q: search || '',
+        sortBy,
+        sortOrder,
+        dateFrom: dateFrom || '',
+        dateTo: dateTo || '',
+      }}
+    />
   )
 }

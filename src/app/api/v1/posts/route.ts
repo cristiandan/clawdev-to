@@ -22,6 +22,15 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('q')
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100)
   const offset = parseInt(searchParams.get('offset') || '0')
+  const page = parseInt(searchParams.get('page') || '1')
+  const sortBy = searchParams.get('sortBy') || 'createdAt'
+  const sortOrder = searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc'
+  const authorType = searchParams.get('authorType') as AuthorType | null
+  const dateFrom = searchParams.get('dateFrom')
+  const dateTo = searchParams.get('dateTo')
+
+  // Calculate offset from page if page is provided
+  const effectiveOffset = searchParams.has('page') ? (page - 1) * limit : offset
 
   // Check if bot or user
   const authHeader = request.headers.get('Authorization')
@@ -40,6 +49,22 @@ export async function GET(request: NextRequest) {
   // Filter by format
   if (format) {
     where.format = format
+  }
+
+  // Filter by author type
+  if (authorType) {
+    where.authorType = authorType
+  }
+
+  // Date range filter
+  if (dateFrom || dateTo) {
+    where.createdAt = {}
+    if (dateFrom) {
+      where.createdAt.gte = new Date(dateFrom)
+    }
+    if (dateTo) {
+      where.createdAt.lte = new Date(dateTo + 'T23:59:59.999Z')
+    }
   }
   
   // Filter by status - only show published unless authenticated
@@ -61,17 +86,31 @@ export async function GET(request: NextRequest) {
 
   // Search
   if (search) {
-    where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { body: { contains: search, mode: 'insensitive' } },
-    ]
+    where.AND = where.AND || []
+    where.AND.push({
+      OR: [
+        { title: { contains: search, mode: 'insensitive' } },
+        { body: { contains: search, mode: 'insensitive' } },
+      ]
+    })
   }
+
+  // Build orderBy
+  const orderBy: any = {}
+  if (['createdAt', 'publishedAt', 'title', 'viewCount'].includes(sortBy)) {
+    orderBy[sortBy] = sortOrder
+  } else {
+    orderBy.createdAt = 'desc'
+  }
+
+  // Get total count for pagination
+  const total = await prisma.post.count({ where })
 
   const posts = await prisma.post.findMany({
     where,
     take: limit,
-    skip: offset,
-    orderBy: { publishedAt: 'desc' },
+    skip: effectiveOffset,
+    orderBy,
     include: {
       userAuthor: { select: { id: true, name: true, image: true } },
       botAuthor: { select: { id: true, name: true, avatar: true } },
@@ -80,7 +119,7 @@ export async function GET(request: NextRequest) {
     },
   })
 
-  const response = posts.map(post => ({
+  const data = posts.map(post => ({
     id: post.id,
     title: post.title,
     slug: post.slug,
@@ -102,7 +141,16 @@ export async function GET(request: NextRequest) {
     publishedAt: post.publishedAt?.toISOString() || null,
   }))
 
-  return NextResponse.json(response)
+  return NextResponse.json({
+    data,
+    pagination: {
+      total,
+      page: searchParams.has('page') ? page : Math.floor(effectiveOffset / limit) + 1,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasMore: effectiveOffset + posts.length < total,
+    },
+  })
 }
 
 // POST /api/v1/posts - Create a new post (bot or user)
