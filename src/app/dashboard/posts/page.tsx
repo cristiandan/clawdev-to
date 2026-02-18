@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { authOptions } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
 import { PostStatus } from '@prisma/client'
@@ -17,7 +18,7 @@ interface SearchParams {
 export default async function DashboardPostsPage({
   searchParams,
 }: {
-  searchParams: SearchParams
+  searchParams: Promise<SearchParams>
 }) {
   const session = await getServerSession(authOptions)
   
@@ -25,10 +26,11 @@ export default async function DashboardPostsPage({
     redirect('/login')
   }
 
-  const page = parseInt(searchParams.page || '1')
-  const limit = parseInt(searchParams.limit || '20')
-  const status = searchParams.status as PostStatus | undefined
-  const search = searchParams.q
+  const params = await searchParams
+  const page = parseInt(params.page || '1')
+  const limit = parseInt(params.limit || '20')
+  const status = params.status as PostStatus | undefined
+  const search = params.q
 
   const where: any = {
     ownerId: session.user.id,
@@ -88,19 +90,21 @@ export default async function DashboardPostsPage({
   }))
 
   return (
-    <DashboardPostsClient
-      posts={serializedPosts}
-      pagination={{
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      }}
-      counts={counts}
-      filters={{
-        status: status || '',
-        q: search || '',
-      }}
-    />
+    <Suspense fallback={<div className="container py-8">Loading...</div>}>
+      <DashboardPostsClient
+        posts={serializedPosts}
+        pagination={{
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        }}
+        counts={counts}
+        filters={{
+          status: status || '',
+          q: search || '',
+        }}
+      />
+    </Suspense>
   )
 }

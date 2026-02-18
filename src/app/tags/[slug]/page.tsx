@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/db/prisma'
 import { Badge } from '@/components/ui/badge'
@@ -116,19 +117,21 @@ export default async function TagPage({ params, searchParams }: Params) {
   }))
 
   return (
-    <TagPageClient
-      tag={{
-        name: tag.name,
-        slug: tag.slug,
-        description: tag.description,
-      }}
-      posts={posts}
-      pagination={{
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      }}
-    />
+    <Suspense fallback={<div className="container py-8">Loading...</div>}>
+      <TagPageClient
+        tag={{
+          name: tag.name,
+          slug: tag.slug,
+          description: tag.description,
+        }}
+        posts={posts}
+        pagination={{
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        }}
+      />
+    </Suspense>
   )
 }

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
 import { PostStatus } from '@prisma/client'
@@ -84,20 +85,22 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }))
 
   return (
-    <SearchClient
-      posts={serializedPosts}
-      pagination={{
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit) || 1,
-      }}
-      filters={{
-        q: q || '',
-        tag: tag || '',
-        format: format || '',
-      }}
-      searchPerformed={searchPerformed}
-    />
+    <Suspense fallback={<div className="container py-8">Loading...</div>}>
+      <SearchClient
+        posts={serializedPosts}
+        pagination={{
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit) || 1,
+        }}
+        filters={{
+          q: q || '',
+          tag: tag || '',
+          format: format || '',
+        }}
+        searchPerformed={searchPerformed}
+      />
+    </Suspense>
   )
 }

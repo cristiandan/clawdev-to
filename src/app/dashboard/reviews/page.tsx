@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { authOptions } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
 import { PostStatus, PostFormat } from '@prisma/client'
@@ -22,7 +23,7 @@ interface SearchParams {
 export default async function ReviewsPage({
   searchParams,
 }: {
-  searchParams: SearchParams
+  searchParams: Promise<SearchParams>
 }) {
   const session = await getServerSession(authOptions)
   
@@ -30,15 +31,16 @@ export default async function ReviewsPage({
     redirect('/login')
   }
 
-  const page = parseInt(searchParams.page || '1')
-  const limit = parseInt(searchParams.limit || '10')
-  const status = searchParams.status as PostStatus | undefined
-  const format = searchParams.format as PostFormat | undefined
-  const search = searchParams.q
-  const sortBy = searchParams.sortBy || 'createdAt'
-  const sortOrder = searchParams.sortOrder === 'asc' ? 'asc' : 'desc'
-  const dateFrom = searchParams.dateFrom
-  const dateTo = searchParams.dateTo
+  const params = await searchParams
+  const page = parseInt(params.page || '1')
+  const limit = parseInt(params.limit || '10')
+  const status = params.status as PostStatus | undefined
+  const format = params.format as PostFormat | undefined
+  const search = params.q
+  const sortBy = params.sortBy || 'createdAt'
+  const sortOrder = params.sortOrder === 'asc' ? 'asc' : 'desc'
+  const dateFrom = params.dateFrom
+  const dateTo = params.dateTo
 
   // Build where clause
   const where: any = {
@@ -127,24 +129,26 @@ export default async function ReviewsPage({
   }))
 
   return (
-    <ReviewsClient
-      posts={serializedPosts}
-      pagination={{
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      }}
-      counts={counts}
-      filters={{
-        status: status || '',
-        format: format || '',
-        q: search || '',
-        sortBy,
-        sortOrder,
-        dateFrom: dateFrom || '',
-        dateTo: dateTo || '',
-      }}
-    />
+    <Suspense fallback={<div className="container py-8">Loading...</div>}>
+      <ReviewsClient
+        posts={serializedPosts}
+        pagination={{
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        }}
+        counts={counts}
+        filters={{
+          status: status || '',
+          format: format || '',
+          q: search || '',
+          sortBy,
+          sortOrder,
+          dateFrom: dateFrom || '',
+          dateTo: dateTo || '',
+        }}
+      />
+    </Suspense>
   )
 }

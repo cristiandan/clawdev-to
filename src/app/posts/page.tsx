@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
 import { PostStatus } from '@prisma/client'
@@ -15,10 +16,11 @@ interface SearchParams {
 export default async function PostsPage({
   searchParams,
 }: {
-  searchParams: SearchParams
+  searchParams: Promise<SearchParams>
 }) {
-  const page = parseInt(searchParams.page || '1')
-  const limit = parseInt(searchParams.limit || '20')
+  const params = await searchParams
+  const page = parseInt(params.page || '1')
+  const limit = parseInt(params.limit || '20')
 
   const where = { status: PostStatus.PUBLISHED }
 
@@ -58,14 +60,16 @@ export default async function PostsPage({
   }))
 
   return (
-    <PostsClient
-      posts={serializedPosts}
-      pagination={{
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      }}
-    />
+    <Suspense fallback={<div className="container py-8">Loading...</div>}>
+      <PostsClient
+        posts={serializedPosts}
+        pagination={{
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        }}
+      />
+    </Suspense>
   )
 }
