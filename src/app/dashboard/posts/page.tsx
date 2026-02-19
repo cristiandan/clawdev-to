@@ -48,21 +48,30 @@ export default async function DashboardPostsPage({
 
   const total = await prisma.post.count({ where })
 
-  const posts = await prisma.post.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    take: limit,
-    skip: (page - 1) * limit,
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      status: true,
-      format: true,
-      createdAt: true,
-      authorType: true,
-    },
-  })
+  const [posts, user] = await Promise.all([
+    prisma.post.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: (page - 1) * limit,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        status: true,
+        format: true,
+        createdAt: true,
+        authorType: true,
+        pinnedAt: true,
+      },
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    }),
+  ])
+
+  const isAdmin = user?.role === 'ADMIN'
 
   // Get counts by status
   const statusCounts = await prisma.post.groupBy({
@@ -87,6 +96,7 @@ export default async function DashboardPostsPage({
     format: post.format as string,
     createdAt: post.createdAt.toISOString(),
     authorType: post.authorType as string,
+    isPinned: post.pinnedAt !== null,
   }))
 
   return (
@@ -104,6 +114,7 @@ export default async function DashboardPostsPage({
           status: status || '',
           q: search || '',
         }}
+        isAdmin={isAdmin}
       />
     </Suspense>
   )

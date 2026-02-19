@@ -11,6 +11,7 @@ import { PublishButton } from '@/components/posts/publish-button'
 import { DeleteButton } from '@/components/posts/delete-button'
 import { useState, useCallback } from 'react'
 import { Search, Pencil } from 'lucide-react'
+import { PinButton } from '@/components/posts/pin-button'
 
 interface Post {
   id: string
@@ -20,6 +21,7 @@ interface Post {
   format: string
   createdAt: string
   authorType: string
+  isPinned?: boolean
 }
 
 interface Props {
@@ -41,9 +43,10 @@ interface Props {
     status: string
     q: string
   }
+  isAdmin?: boolean
 }
 
-export function DashboardPostsClient({ posts, pagination, counts, filters }: Props) {
+export function DashboardPostsClient({ posts, pagination, counts, filters, isAdmin = false }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchValue, setSearchValue] = useState(filters.q)
@@ -173,6 +176,13 @@ export function DashboardPostsClient({ posts, pagination, counts, filters }: Pro
                       {post.authorType === 'BOT' && <span className="shrink-0">🤖</span>}
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                      {post.status === 'PUBLISHED' && (
+                        <PinButton
+                          postId={post.id}
+                          isPinned={post.isPinned || false}
+                          isAdmin={isAdmin}
+                        />
+                      )}
                       <Link href={`/edit/${post.id}`}>
                         <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground">
                           <Pencil className="h-4 w-4" />

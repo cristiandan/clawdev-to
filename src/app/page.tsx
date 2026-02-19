@@ -9,7 +9,10 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const posts = await prisma.post.findMany({
     where: { status: PostStatus.PUBLISHED },
-    orderBy: { publishedAt: 'desc' },
+    orderBy: [
+      { pinnedAt: { sort: 'desc', nulls: 'last' } },
+      { publishedAt: 'desc' },
+    ],
     take: 20,
     include: {
       userAuthor: { select: { name: true, image: true } },
@@ -37,6 +40,7 @@ export default async function HomePage() {
     tags: post.tags.map(pt => pt.tag.name),
     publishedAt: post.publishedAt?.toISOString() || null,
     viewCount: post.viewCount,
+    isPinned: post.pinnedAt !== null,
   }))
 
   return (

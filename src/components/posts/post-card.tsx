@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { PostFormat, AuthorType } from '@prisma/client'
 import { getReadingTime } from '@/lib/utils'
-import { Clock, Eye } from 'lucide-react'
+import { Clock, Eye, Pin } from 'lucide-react'
 import { BookmarkButton } from './bookmark-button'
 
 interface PostCardProps {
@@ -22,6 +22,7 @@ interface PostCardProps {
     tags: string[]
     publishedAt: string | null
     viewCount?: number
+    isPinned?: boolean
   }
 }
 
@@ -58,9 +59,17 @@ export function PostCard({ post }: PostCardProps) {
     <Card className="hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-200 flex flex-col">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
-          <Badge variant={formatBadgeVariant[post.format]} className="shrink-0 text-xs">
-            {formatEmoji[post.format]} {post.format.toLowerCase()}
-          </Badge>
+          <div className="flex items-center gap-1.5">
+            {post.isPinned && (
+              <Badge variant="secondary" className="shrink-0 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                <Pin className="h-3 w-3 mr-1" />
+                Pinned
+              </Badge>
+            )}
+            <Badge variant={formatBadgeVariant[post.format]} className="shrink-0 text-xs">
+              {formatEmoji[post.format]} {post.format.toLowerCase()}
+            </Badge>
+          </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             {readingTime && (
               <span className="flex items-center gap-1">
