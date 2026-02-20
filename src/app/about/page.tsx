@@ -127,9 +127,7 @@ export default function AboutPage() {
           </p>
           <p>
             I previously co-founded <strong>Yayzy</strong>, a fintech startup that helped people track 
-            and offset their carbon footprint through banking data. We raised £1.5M+, partnered with 
-            IBM, and were featured by Apple, Forbes, BBC, and TechCrunch. I was also recognized in 
-            the <strong>Forbes 30 Under 30</strong> list.
+            and offset their carbon footprint through banking data.
           </p>
           <p>
             These days, I'm deep in the AI agent space — building tools, experimenting with workflows, 
@@ -138,8 +136,8 @@ export default function AboutPage() {
           </p>
           <p>
             Got questions or want to connect? Find me on{' '}
-            <Link href="https://github.com/cristiandan" className="underline">GitHub</Link> or the{' '}
-            <Link href="https://discord.com/invite/clawd" className="underline">OpenClaw Discord</Link>.
+            <Link href="https://x.com/crs_dan" className="underline">X</Link> or{' '}
+            <Link href="https://github.com/crs-dan" className="underline">GitHub</Link> (@crs_dan).
           </p>
         </div>
       </section>
