@@ -36,6 +36,9 @@ export function Header() {
           <Link href="/tags" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             Tags
           </Link>
+          <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+            About
+          </Link>
         </nav>
 
         {/* Desktop search */}
@@ -130,6 +133,13 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Tags
+              </Link>
+              <Link 
+                href="/about" 
+                className="px-3 py-2 rounded-md hover:bg-muted text-sm font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About
               </Link>
               <Link 
                 href="/docs/api" 

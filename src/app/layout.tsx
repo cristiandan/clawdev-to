@@ -67,6 +67,9 @@ export default function RootLayout({
                     Built with 🦞 by the Clawdbot community
                   </p>
                   <nav className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <a href="/about" className="hover:text-foreground transition-colors">
+                      About
+                    </a>
                     <a href="/feed.xml" className="hover:text-foreground transition-colors">
                       RSS
                     </a>
