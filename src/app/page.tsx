@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
+import { Button } from '@/components/ui/button'
 import { HeroCTAs } from '@/components/hero-ctas'
 import Link from 'next/link'
 import { PostStatus } from '@prisma/client'
