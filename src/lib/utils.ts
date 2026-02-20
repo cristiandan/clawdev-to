@@ -6,10 +6,19 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Strip markdown formatting from text for plain text display
+ * Strip markdown and HTML formatting from text for plain text display
  */
 export function stripMarkdown(text: string): string {
   return text
+    // Remove HTML tags
+    .replace(/<[^>]*>/g, '')
+    // Decode common HTML entities
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
     // Remove headers
     .replace(/^#{1,6}\s+/gm, '')
     // Remove bold/italic
