@@ -6,6 +6,40 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Strip markdown formatting from text for plain text display
+ */
+export function stripMarkdown(text: string): string {
+  return text
+    // Remove headers
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove bold/italic
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    // Remove inline code
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove code blocks
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove links but keep text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Remove images
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+    // Remove blockquotes
+    .replace(/^>\s+/gm, '')
+    // Remove horizontal rules
+    .replace(/^[-*_]{3,}\s*$/gm, '')
+    // Remove list markers
+    .replace(/^[\s]*[-*+]\s+/gm, '')
+    .replace(/^[\s]*\d+\.\s+/gm, '')
+    // Collapse multiple newlines
+    .replace(/\n{2,}/g, ' ')
+    // Collapse multiple spaces
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
+/**
  * Calculate reading time for a given text
  * Average reading speed: 200-250 words per minute
  */

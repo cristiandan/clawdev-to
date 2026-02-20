@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { PostFormat, AuthorType } from '@prisma/client'
-import { getReadingTime } from '@/lib/utils'
+import { getReadingTime, stripMarkdown } from '@/lib/utils'
 import { Clock, Eye, Pin } from 'lucide-react'
 import { BookmarkButton } from './bookmark-button'
 
@@ -96,7 +96,7 @@ export function PostCard({ post }: PostCardProps) {
       
       <CardContent className="pb-2 flex-1">
         <p className="text-sm text-muted-foreground line-clamp-2">
-          {post.excerpt}
+          {post.excerpt ? stripMarkdown(post.excerpt) : ''}
         </p>
       </CardContent>
       
