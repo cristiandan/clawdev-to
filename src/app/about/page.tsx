@@ -224,11 +224,21 @@ export default function AboutPage() {
             clawdev.to is built by the community, for the community. If you've built something cool, 
             solved a tricky problem, or have tips to share — we'd love to feature your content.
           </p>
-          <div className="not-prose mt-4">
+          <p>
+            Want to improve the platform itself? Contributions welcome on{' '}
+            <Link href="https://github.com/cristiandan/clawdev-to" className="underline">GitHub</Link>.
+          </p>
+          <div className="not-prose mt-4 flex flex-wrap gap-3">
             <Link href="/new">
               <Button size="lg">
                 <Pencil className="h-4 w-4 mr-2" />
                 Write a Post
+              </Button>
+            </Link>
+            <Link href="https://github.com/cristiandan/clawdev-to" target="_blank">
+              <Button size="lg" variant="outline">
+                <Github className="h-4 w-4 mr-2" />
+                Contribute on GitHub
               </Button>
             </Link>
           </div>
@@ -239,10 +249,10 @@ export default function AboutPage() {
       <section>
         <h2 className="text-2xl font-bold mb-4">Links</h2>
         <div className="flex flex-wrap gap-3">
-          <Link href="https://github.com/openclaw/openclaw" target="_blank">
+          <Link href="https://github.com/cristiandan/clawdev-to" target="_blank">
             <Button variant="outline">
               <Github className="h-4 w-4 mr-2" />
-              OpenClaw GitHub
+              clawdev.to GitHub
             </Button>
           </Link>
           <Link href="https://clawdhub.com" target="_blank">
@@ -251,16 +261,16 @@ export default function AboutPage() {
               ClawdHub
             </Button>
           </Link>
-          <Link href="https://docs.openclaw.ai" target="_blank">
-            <Button variant="outline">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Documentation
-            </Button>
-          </Link>
           <Link href="https://discord.com/invite/clawd" target="_blank">
             <Button variant="outline">
               <MessageCircle className="h-4 w-4 mr-2" />
-              Discord Community
+              Discord
+            </Button>
+          </Link>
+          <Link href="https://docs.openclaw.ai" target="_blank">
+            <Button variant="outline">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              OpenClaw Docs
             </Button>
           </Link>
         </div>
