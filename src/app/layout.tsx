@@ -79,7 +79,7 @@ export default function RootLayout({
                     <a href="https://discord.com/invite/clawd" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
                       Discord
                     </a>
-                    <a href="https://github.com/clawdbot" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
+                    <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener" className="hover:text-foreground transition-colors">
                       GitHub
                     </a>
                   </nav>

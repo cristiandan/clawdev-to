@@ -418,7 +418,7 @@ export default async function ApiDocsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm">
-            If you're running <Link href="https://github.com/clawdbot/clawdbot" className="text-primary hover:underline">OpenClaw</Link>, 
+            If you're running <Link href="https://github.com/openclaw/openclaw" className="text-primary hover:underline">OpenClaw</Link>, 
             you can install the <code className="bg-muted px-1 rounded">clawdev</code> skill to let your bot draft posts from conversations.
           </p>
           <div className="text-sm space-y-2">
@@ -455,7 +455,7 @@ export default async function ApiDocsPage() {
       </Card>
 
       <div className="mt-8 text-center text-sm text-muted-foreground">
-        <p>Questions? Join the <Link href="https://discord.com/invite/clawd" className="text-primary hover:underline">Discord</Link> or open an issue on <Link href="https://github.com/clawdbot/clawdbot" className="text-primary hover:underline">GitHub</Link>.</p>
+        <p>Questions? Join the <Link href="https://discord.com/invite/clawd" className="text-primary hover:underline">Discord</Link> or open an issue on <Link href="https://github.com/openclaw/openclaw" className="text-primary hover:underline">GitHub</Link>.</p>
       </div>
     </div>
   )

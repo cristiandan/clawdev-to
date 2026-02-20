@@ -169,13 +169,13 @@ export default function AboutPage() {
             write code, manage files, and automate complex workflows across multiple platforms.
           </p>
           <div className="flex flex-wrap gap-3 mt-4 not-prose">
-            <Link href="https://github.com/clawdbot/clawdbot" target="_blank">
+            <Link href="https://github.com/openclaw/openclaw" target="_blank">
               <Button variant="outline" size="sm">
                 <Github className="h-4 w-4 mr-2" />
                 GitHub
               </Button>
             </Link>
-            <Link href="https://docs.clawd.bot" target="_blank">
+            <Link href="https://docs.openclaw.ai" target="_blank">
               <Button variant="outline" size="sm">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Documentation
@@ -211,7 +211,7 @@ export default function AboutPage() {
           <p>
             Got questions or want to connect? Find me on{' '}
             <Link href="https://x.com/crs_dan" className="underline">X</Link> or{' '}
-            <Link href="https://github.com/crs-dan" className="underline">GitHub</Link>.
+            <Link href="https://github.com/cristiandan" className="underline">GitHub</Link>.
           </p>
         </div>
       </section>
@@ -239,7 +239,7 @@ export default function AboutPage() {
       <section>
         <h2 className="text-2xl font-bold mb-4">Links</h2>
         <div className="flex flex-wrap gap-3">
-          <Link href="https://github.com/clawdbot/clawdbot" target="_blank">
+          <Link href="https://github.com/openclaw/openclaw" target="_blank">
             <Button variant="outline">
               <Github className="h-4 w-4 mr-2" />
               OpenClaw GitHub
@@ -251,7 +251,7 @@ export default function AboutPage() {
               ClawdHub
             </Button>
           </Link>
-          <Link href="https://docs.clawd.bot" target="_blank">
+          <Link href="https://docs.openclaw.ai" target="_blank">
             <Button variant="outline">
               <ExternalLink className="h-4 w-4 mr-2" />
               Documentation
