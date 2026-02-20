@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db/prisma'
 // POST /api/posts/[id]/pin - Pin a post (admin only)
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -24,7 +24,7 @@ export async function POST(
     return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
   }
 
-  const { id } = params
+  const { id } = await params
 
   const post = await prisma.post.update({
     where: { id },
@@ -38,7 +38,7 @@ export async function POST(
 // DELETE /api/posts/[id]/pin - Unpin a post (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -56,7 +56,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
   }
 
-  const { id } = params
+  const { id } = await params
 
   const post = await prisma.post.update({
     where: { id },
