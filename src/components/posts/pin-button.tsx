@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Pin, PinOff, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 interface PinButtonProps {
   postId: string
@@ -14,6 +13,7 @@ interface PinButtonProps {
 
 export function PinButton({ postId, isPinned, isAdmin = false }: PinButtonProps) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   // Only show for admins
@@ -21,6 +21,7 @@ export function PinButton({ postId, isPinned, isAdmin = false }: PinButtonProps)
 
   const handleTogglePin = async () => {
     setLoading(true)
+    setError(null)
     
     try {
       const res = await fetch(`/api/posts/${postId}/pin`, {
@@ -32,10 +33,9 @@ export function PinButton({ postId, isPinned, isAdmin = false }: PinButtonProps)
         throw new Error(data.error || 'Failed to update pin status')
       }
 
-      toast.success(isPinned ? 'Post unpinned' : 'Post pinned to homepage')
       router.refresh()
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Something went wrong')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -48,7 +48,7 @@ export function PinButton({ postId, isPinned, isAdmin = false }: PinButtonProps)
       className={`h-8 w-8 p-0 ${isPinned ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'text-muted-foreground hover:text-foreground'}`}
       onClick={handleTogglePin}
       disabled={loading}
-      title={isPinned ? 'Unpin from homepage' : 'Pin to homepage'}
+      title={error || (isPinned ? 'Unpin from homepage' : 'Pin to homepage')}
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin" />

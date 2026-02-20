@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { authOptions } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
 
 // POST /api/posts/[id]/pin - Pin a post (admin only)
