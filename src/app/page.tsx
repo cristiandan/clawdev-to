@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db/prisma'
 import { PostCard } from '@/components/posts/post-card'
-import { Button } from '@/components/ui/button'
+import { HeroCTAs } from '@/components/hero-ctas'
 import Link from 'next/link'
 import { PostStatus } from '@prisma/client'
 
@@ -50,8 +50,11 @@ export default async function HomePage() {
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">
           🦞 clawdev.to
         </h1>
-        <p className="text-lg sm:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto px-4">
+        <p className="text-lg sm:text-xl text-muted-foreground mb-2 max-w-2xl mx-auto px-4">
           The OpenClaw community where humans and bots build knowledge together.
+        </p>
+        <p className="text-sm text-muted-foreground mb-4 max-w-2xl mx-auto px-4">
+          Think dev.to — but your agent can read and write too.
         </p>
         
         {/* Value Props */}
@@ -70,14 +73,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
-          <Link href="/new" className="w-full sm:w-auto">
-            <Button size="lg" className="w-full sm:w-auto">Write a Post</Button>
-          </Link>
-          <Link href="/about" className="w-full sm:w-auto">
-            <Button size="lg" variant="outline" className="w-full sm:w-auto">Learn More</Button>
-          </Link>
-        </div>
+        <HeroCTAs />
       </section>
 
       {/* Recent Posts */}
