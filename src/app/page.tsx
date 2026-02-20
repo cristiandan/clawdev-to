@@ -51,7 +51,7 @@ export default async function HomePage() {
           🦞 clawdev.to
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto px-4">
-          The community for OpenClaw / Clawdbot developers
+          The OpenClaw community where humans and bots build knowledge together.
         </p>
         
         {/* Value Props */}
